@@ -7,16 +7,18 @@ Times are shown in the station's time zone, whatever zone the phone is in.
 
 ## Run
 
-Android Studio 2025.3 or newer, JDK 21.
-
-```
-./gradlew installDebug          # build and install on a device or emulator
-./gradlew testDebugUnitTest     # all tests, on the JVM, no emulator, no network
-./gradlew recordRoborazziDebug  # re-record the screenshot goldens after a UI change
-```
-
-The API key is not in git. Add `timetableApiKey=<key>` to `~/.gradle/gradle.properties`,
-or pass `-PtimetableApiKey=<key>`, or set `TIMETABLE_API_KEY`. Tests do not need it.
+1. Add the API key. It is not in git. Put this line into `~/.gradle/gradle.properties`
+   (or pass `-PtimetableApiKey=<key>`, or set `TIMETABLE_API_KEY`):
+   ```
+   timetableApiKey=<the key from the task>
+   ```
+   Without it the build prints a warning and the app shows "Something went wrong". Tests do not need it.
+2. Build and run. Android Studio 2025.3 or newer, JDK 21, a device or emulator with Android 8.0 (API 26) or newer.
+   ```
+   ./gradlew installDebug          # build and install on a device or emulator
+   ./gradlew testDebugUnitTest     # all tests, on the JVM, no emulator, no network
+   ./gradlew recordRoborazziDebug  # re-record the screenshot goldens after a UI change
+   ```
 
 ## What it does
 

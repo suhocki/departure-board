@@ -16,6 +16,13 @@ val timetableApiKey: String =
         .orElse(providers.environmentVariable("TIMETABLE_API_KEY"))
         .getOrElse("")
 
+if (timetableApiKey.isEmpty()) {
+    logger.warn(
+        "w: timetableApiKey is not set. The app builds, but every request fails with HTTP 401 " +
+            "and shows \"Something went wrong\". See README.md, section Run.",
+    )
+}
+
 android {
     namespace = "com.sukhotski.timetable"
     compileSdk {
