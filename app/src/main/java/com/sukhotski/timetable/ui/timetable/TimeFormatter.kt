@@ -11,9 +11,9 @@ import kotlin.math.abs
 /**
  * Explicit time patterns, not localized styles: they follow the device 12/24 hour switch
  * and give the same text on every JDK and device. The date pattern comes from the device
- * locale (see rememberTimeFormatter), the default is for tests and previews.
+ * locale (see rememberTimeFormatter). The default is the en-US result, for tests and previews.
  */
-class TimeFormatter(is24Hour: Boolean, locale: Locale, datePattern: String = "EEEE, d MMMM") {
+class TimeFormatter(is24Hour: Boolean, locale: Locale, datePattern: String = "EEEE, MMMM d") {
     private val timeFormat = DateTimeFormatter.ofPattern(
         if (is24Hour) "HH:mm" else "h:mm a",
         locale,

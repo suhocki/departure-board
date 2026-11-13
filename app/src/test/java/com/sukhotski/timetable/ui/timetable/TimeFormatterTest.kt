@@ -65,15 +65,15 @@ class TimeFormatterTest {
 
     @Test
     fun `formats date header`() {
-        assertEquals("Saturday, 14 November", formatter24.date(LocalDate.of(2026, 11, 14)))
-        assertEquals("Friday, 13 November", formatter24.date(LocalDate.of(2026, 11, 13)))
+        assertEquals("Saturday, November 14", formatter24.date(LocalDate.of(2026, 11, 14)))
+        assertEquals("Friday, November 13", formatter24.date(LocalDate.of(2026, 11, 13)))
     }
 
     @Test
     fun `formats date header with the given pattern`() {
-        val us = TimeFormatter(is24Hour = false, Locale.US, datePattern = "EEEE, MMMM d")
+        val german = TimeFormatter(is24Hour = true, Locale.GERMANY, datePattern = "EEEE, d. MMMM")
 
-        assertEquals("Saturday, November 14", us.date(LocalDate.of(2026, 11, 14)))
+        assertEquals("Samstag, 14. November", german.date(LocalDate.of(2026, 11, 14)))
     }
 
     @Test

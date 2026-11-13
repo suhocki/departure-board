@@ -241,7 +241,7 @@ class TimetableScreenTest {
     fun `shows date header before rides of the next day`() {
         setScreen(PreviewData.content)
 
-        val header = composeRule.onNode(hasText("Saturday, 14 November") and isHeading())
+        val header = composeRule.onNode(hasText("Saturday, November 14") and isHeading())
         header.assertIsDisplayed()
         val headerBounds = header.getUnclippedBoundsInRoot()
         assertTrue(
