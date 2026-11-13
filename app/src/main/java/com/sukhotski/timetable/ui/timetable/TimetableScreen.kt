@@ -92,7 +92,7 @@ private fun LoadedContent(
     modifier: Modifier = Modifier,
 ) {
     val station = state.timetable.station
-    val hours = TimetableViewModel.WINDOW.toHours().toInt()
+    val hours = state.window.toHours().toInt()
     Column(modifier) {
         StationHeader(station, state.updatedAt, hours)
         state.refreshError?.let {

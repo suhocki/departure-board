@@ -40,7 +40,7 @@ class TimetableViewModelTest {
 
         createViewModel().state.test {
             assertEquals(TimetableUiState.Loading, awaitItem())
-            assertEquals(TimetableUiState.Loaded(timetable, updatedAt = start), awaitItem())
+            assertEquals(loaded(timetable, updatedAt = start), awaitItem())
         }
     }
 
@@ -52,7 +52,7 @@ class TimetableViewModelTest {
 
         advanceUntilIdle()
 
-        assertEquals(TimetableUiState.Loaded(empty, updatedAt = start), viewModel.state.value)
+        assertEquals(loaded(empty, updatedAt = start), viewModel.state.value)
     }
 
     @Test
@@ -106,7 +106,7 @@ class TimetableViewModelTest {
             assertEquals(TimetableUiState.Error(LoadError.NoConnection), awaitItem())
             viewModel.refresh()
             assertEquals(TimetableUiState.Loading, awaitItem())
-            assertEquals(TimetableUiState.Loaded(timetable, updatedAt = start), awaitItem())
+            assertEquals(loaded(timetable, updatedAt = start), awaitItem())
         }
     }
 
@@ -118,11 +118,11 @@ class TimetableViewModelTest {
 
         viewModel.state.test {
             skipItems(1)
-            val loaded = TimetableUiState.Loaded(timetable, updatedAt = start)
-            assertEquals(loaded, awaitItem())
+            val first = loaded(timetable, updatedAt = start)
+            assertEquals(first, awaitItem())
             viewModel.refresh()
-            assertEquals(loaded.copy(isRefreshing = true), awaitItem())
-            assertEquals(TimetableUiState.Loaded(newerTimetable, updatedAt = start), awaitItem())
+            assertEquals(first.copy(isRefreshing = true), awaitItem())
+            assertEquals(loaded(newerTimetable, updatedAt = start), awaitItem())
         }
     }
 
@@ -147,7 +147,7 @@ class TimetableViewModelTest {
             repository.calls.last(),
         )
         assertEquals(
-            TimetableUiState.Loaded(newerTimetable, updatedAt = later),
+            loaded(newerTimetable, updatedAt = later),
             viewModel.state.value,
         )
     }
@@ -178,7 +178,7 @@ class TimetableViewModelTest {
         advanceUntilIdle()
 
         assertEquals(
-            TimetableUiState.Loaded(
+            loaded(
                 timetable,
                 updatedAt = start,
                 isRefreshing = false,
@@ -205,7 +205,7 @@ class TimetableViewModelTest {
                 (failed as TimetableUiState.Loaded).copy(isRefreshing = true, refreshError = null),
                 awaitItem(),
             )
-            assertEquals(TimetableUiState.Loaded(newerTimetable, updatedAt = start), awaitItem())
+            assertEquals(loaded(newerTimetable, updatedAt = start), awaitItem())
         }
     }
 
@@ -269,8 +269,21 @@ class TimetableViewModelTest {
         advanceUntilIdle()
 
         assertEquals(2, repository.calls.size)
-        assertEquals(TimetableUiState.Loaded(timetable, updatedAt = start), viewModel.state.value)
+        assertEquals(loaded(timetable, updatedAt = start), viewModel.state.value)
     }
 
     private fun createViewModel() = TimetableViewModel(repository, clock)
+
+    private fun loaded(
+        timetable: Timetable,
+        updatedAt: Instant,
+        isRefreshing: Boolean = false,
+        refreshError: LoadError? = null,
+    ) = TimetableUiState.Loaded(
+        timetable,
+        updatedAt,
+        TimetableViewModel.WINDOW,
+        isRefreshing,
+        refreshError,
+    )
 }

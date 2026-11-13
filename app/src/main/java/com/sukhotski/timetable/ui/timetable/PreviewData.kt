@@ -5,6 +5,7 @@ import com.sukhotski.timetable.domain.DepartureStatus
 import com.sukhotski.timetable.domain.LoadError
 import com.sukhotski.timetable.domain.Station
 import com.sukhotski.timetable.domain.Timetable
+import java.time.Duration
 import java.time.Instant
 import java.time.ZoneId
 import java.time.ZoneOffset
@@ -15,6 +16,8 @@ object PreviewData {
         Station("Berlin central bus station", ZoneId.of("Europe/Berlin"), zoneIsFallback = false)
 
     val updatedAt: Instant = at("22:05:00")
+
+    private val window: Duration = Duration.ofHours(2)
 
     val timetable = Timetable(
         station = station,
@@ -52,7 +55,7 @@ object PreviewData {
         ),
     )
 
-    val content = TimetableUiState.Loaded(timetable, updatedAt)
+    val content = TimetableUiState.Loaded(timetable, updatedAt, window)
 
     val contentZoneUnknown = content.copy(
         timetable = timetable.copy(
@@ -64,7 +67,7 @@ object PreviewData {
 
     val errorUnexpected = TimetableUiState.Error(LoadError.Unexpected)
 
-    val empty = TimetableUiState.Loaded(Timetable(station, emptyList()), updatedAt)
+    val empty = TimetableUiState.Loaded(Timetable(station, emptyList()), updatedAt, window)
 
     val refreshFailed = content.copy(refreshError = LoadError.NoConnection)
 

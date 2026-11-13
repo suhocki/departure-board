@@ -66,7 +66,7 @@ class TimetableViewModel @Inject constructor(
                 when (val result = repository.departures(STATION_ID, now, now + WINDOW)) {
                     is LoadResult.Success -> {
                         loadedAt = startedAt
-                        TimetableUiState.Loaded(result.value, updatedAt = now)
+                        TimetableUiState.Loaded(result.value, updatedAt = now, window = WINDOW)
                     }
 
                     is LoadResult.Failure ->
