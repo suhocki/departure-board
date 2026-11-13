@@ -7,6 +7,14 @@ plugins {
     alias(libs.plugins.ktlint)
 }
 
+// The API key is not stored in git. Set timetableApiKey in ~/.gradle/gradle.properties,
+// pass -PtimetableApiKey=..., or set TIMETABLE_API_KEY. Without a key the app shows an error.
+val timetableApiKey: String =
+    providers
+        .gradleProperty("timetableApiKey")
+        .orElse(providers.environmentVariable("TIMETABLE_API_KEY"))
+        .getOrElse("")
+
 android {
     namespace = "com.sukhotski.timetable"
     compileSdk {
@@ -19,6 +27,11 @@ android {
         targetSdk = 36
         versionCode = 1
         versionName = "1.0"
+        buildConfigField(
+            "String",
+            "TIMETABLE_API_KEY",
+            "\"$timetableApiKey\"",
+        )
     }
 
     compileOptions {
@@ -27,6 +40,7 @@ android {
     }
     buildFeatures {
         compose = true
+        buildConfig = true
     }
     lint {
         warningsAsErrors = true
