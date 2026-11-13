@@ -166,5 +166,48 @@ class TimetableViewModelTest {
         assertEquals(2, repository.calls.size)
     }
 
+    @Test
+    fun `failed refresh keeps content and sets refresh error`() = runTest {
+        repository.results += LoadResult.Success(timetable)
+        repository.results += LoadResult.Failure(LoadError.NoConnection)
+        val viewModel = createViewModel()
+        advanceUntilIdle()
+
+        clock.advanceBy(Duration.ofMinutes(10))
+        viewModel.refresh()
+        advanceUntilIdle()
+
+        assertEquals(
+            TimetableUiState.Loaded(
+                timetable,
+                updatedAt = start,
+                isRefreshing = false,
+                refreshError = LoadError.NoConnection,
+            ),
+            viewModel.state.value,
+        )
+    }
+
+    @Test
+    fun `successful refresh clears refresh error`() = runTest {
+        repository.results += LoadResult.Success(timetable)
+        repository.results += LoadResult.Failure(LoadError.NoConnection)
+        repository.results += LoadResult.Success(newerTimetable)
+        val viewModel = createViewModel()
+        advanceUntilIdle()
+        viewModel.refresh()
+        advanceUntilIdle()
+
+        viewModel.state.test {
+            val failed = awaitItem()
+            viewModel.refresh()
+            assertEquals(
+                (failed as TimetableUiState.Loaded).copy(isRefreshing = true, refreshError = null),
+                awaitItem(),
+            )
+            assertEquals(TimetableUiState.Loaded(newerTimetable, updatedAt = start), awaitItem())
+        }
+    }
+
     private fun createViewModel() = TimetableViewModel(repository, clock)
 }

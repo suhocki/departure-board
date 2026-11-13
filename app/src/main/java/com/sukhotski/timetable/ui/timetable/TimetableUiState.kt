@@ -14,5 +14,7 @@ sealed interface TimetableUiState {
         /** The start of the requested window. */
         val updatedAt: Instant,
         val isRefreshing: Boolean = false,
+        /** Set when a refresh failed and the list on screen is older. */
+        val refreshError: LoadError? = null,
     ) : TimetableUiState
 }

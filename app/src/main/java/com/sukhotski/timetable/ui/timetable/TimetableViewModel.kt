@@ -38,13 +38,17 @@ class TimetableViewModel @Inject constructor(
     private fun load() {
         if (loadJob?.isActive == true) return
         val previous = _state.value as? TimetableUiState.Loaded
-        _state.value = previous?.copy(isRefreshing = true) ?: TimetableUiState.Loading
+        _state.value =
+            previous?.copy(isRefreshing = true, refreshError = null) ?: TimetableUiState.Loading
         loadJob = viewModelScope.launch {
             val now = clock.instant().truncatedTo(ChronoUnit.MINUTES)
             _state.value =
                 when (val result = repository.departures(STATION_ID, now, now + WINDOW)) {
                     is LoadResult.Success -> TimetableUiState.Loaded(result.value, updatedAt = now)
-                    is LoadResult.Failure -> TimetableUiState.Error(result.error)
+
+                    is LoadResult.Failure ->
+                        previous?.copy(isRefreshing = false, refreshError = result.error)
+                            ?: TimetableUiState.Error(result.error)
                 }
         }
     }
