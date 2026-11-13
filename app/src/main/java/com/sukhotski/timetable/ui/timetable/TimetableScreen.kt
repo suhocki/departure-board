@@ -89,6 +89,9 @@ private fun LoadedContent(
     val hours = TimetableViewModel.WINDOW.toHours().toInt()
     Column(modifier) {
         StationHeader(station, state.updatedAt, hours)
+        state.refreshError?.let {
+            RefreshErrorBanner(it, dataTime = formatter.time(state.updatedAt, station.zone))
+        }
         PullToRefreshBox(
             isRefreshing = state.isRefreshing,
             onRefresh = onRefresh,

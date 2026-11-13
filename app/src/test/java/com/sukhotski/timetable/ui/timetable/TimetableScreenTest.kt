@@ -2,6 +2,7 @@ package com.sukhotski.timetable.ui.timetable
 
 import android.content.Context
 import androidx.compose.ui.test.assertIsDisplayed
+import androidx.compose.ui.test.getUnclippedBoundsInRoot
 import androidx.compose.ui.test.hasText
 import androidx.compose.ui.test.isHeading
 import androidx.compose.ui.test.junit4.v2.createComposeRule
@@ -11,9 +12,11 @@ import androidx.compose.ui.test.performClick
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.sukhotski.timetable.R
+import com.sukhotski.timetable.domain.LoadError
 import com.sukhotski.timetable.ui.theme.TimetableTheme
 import java.util.Locale
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertTrue
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -120,6 +123,31 @@ class TimetableScreenTest {
             context.resources.getQuantityString(R.plurals.empty_body, 2, 2),
         ).assertIsDisplayed()
         composeRule.onNodeWithText("Berlin central bus station").assertIsDisplayed()
+    }
+
+    @Test
+    fun `failed refresh shows banner above the list`() {
+        setScreen(PreviewData.refreshFailed)
+
+        val banner = composeRule.onNodeWithText(
+            context.getString(R.string.banner_no_connection, "23:05"),
+        )
+        banner.assertIsDisplayed()
+        val firstRow = composeRule.onNodeWithText("060")
+        firstRow.assertIsDisplayed()
+        assertTrue(
+            banner.getUnclippedBoundsInRoot().bottom <= firstRow.getUnclippedBoundsInRoot().top,
+        )
+        composeRule.onNodeWithText("Medyka, Border Crossing").assertIsDisplayed()
+    }
+
+    @Test
+    fun `unexpected refresh error shows its own banner text`() {
+        setScreen(PreviewData.content.copy(refreshError = LoadError.Unexpected))
+
+        composeRule.onNodeWithText(
+            context.getString(R.string.banner_unexpected, "23:05"),
+        ).assertIsDisplayed()
     }
 
     private fun setScreen(state: TimetableUiState, onRefresh: () -> Unit = {}) {
