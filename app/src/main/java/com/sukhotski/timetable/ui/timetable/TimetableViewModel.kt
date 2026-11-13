@@ -7,6 +7,7 @@ import com.sukhotski.timetable.domain.TimetableRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import java.time.Clock
 import java.time.Duration
+import java.time.Instant
 import java.time.temporal.ChronoUnit
 import javax.inject.Inject
 import kotlinx.coroutines.Job
@@ -25,6 +26,9 @@ class TimetableViewModel @Inject constructor(
     val state: StateFlow<TimetableUiState> = _state.asStateFlow()
 
     private var loadJob: Job? = null
+
+    /** When the list on screen was loaded, to the second. updatedAt is cut to the minute. */
+    private var loadedAt: Instant = Instant.EPOCH
 
     init {
         load()
@@ -46,7 +50,7 @@ class TimetableViewModel @Inject constructor(
             is TimetableUiState.Error -> load()
 
             is TimetableUiState.Loaded ->
-                if (Duration.between(state.updatedAt, clock.instant()) > STALE_AFTER) load()
+                if (Duration.between(loadedAt, clock.instant()) > STALE_AFTER) load()
         }
     }
 
@@ -56,10 +60,14 @@ class TimetableViewModel @Inject constructor(
         _state.value =
             previous?.copy(isRefreshing = true, refreshError = null) ?: TimetableUiState.Loading
         loadJob = viewModelScope.launch {
-            val now = clock.instant().truncatedTo(ChronoUnit.MINUTES)
+            val startedAt = clock.instant()
+            val now = startedAt.truncatedTo(ChronoUnit.MINUTES)
             _state.value =
                 when (val result = repository.departures(STATION_ID, now, now + WINDOW)) {
-                    is LoadResult.Success -> TimetableUiState.Loaded(result.value, updatedAt = now)
+                    is LoadResult.Success -> {
+                        loadedAt = startedAt
+                        TimetableUiState.Loaded(result.value, updatedAt = now)
+                    }
 
                     is LoadResult.Failure ->
                         previous?.copy(isRefreshing = false, refreshError = result.error)

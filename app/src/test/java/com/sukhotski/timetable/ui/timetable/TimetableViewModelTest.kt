@@ -238,6 +238,27 @@ class TimetableViewModelTest {
     }
 
     @Test
+    fun `stale check uses the load time, not the window start`() = runTest {
+        repository.results += LoadResult.Success(timetable)
+        repository.results += LoadResult.Success(newerTimetable)
+        clock.advanceBy(Duration.ofSeconds(59))
+        val viewModel = createViewModel()
+        advanceUntilIdle()
+
+        clock.advanceBy(Duration.ofSeconds(3))
+        viewModel.refreshIfStale()
+        advanceUntilIdle()
+
+        assertEquals(1, repository.calls.size)
+
+        clock.advanceBy(Duration.ofSeconds(58))
+        viewModel.refreshIfStale()
+        advanceUntilIdle()
+
+        assertEquals(2, repository.calls.size)
+    }
+
+    @Test
     fun `retries after error on return`() = runTest {
         repository.results += LoadResult.Failure(LoadError.NoConnection)
         repository.results += LoadResult.Success(timetable)
