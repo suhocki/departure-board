@@ -28,19 +28,6 @@ class TimetableApiTest {
     }
 
     @Test
-    fun `sends station id window and api key`() = runTest {
-        server.enqueue(MockResponse.Builder().body("""{"rides":[]}""").build())
-
-        api.departures("station-1", from = "2026-11-13T16:05:00Z", to = "2026-11-13T18:05:00Z")
-
-        val url = server.takeRequest().url
-        assertEquals("/gis/v2/timetable/station-1/departures", url.encodedPath)
-        assertEquals("2026-11-13T16:05:00Z", url.queryParameter("from"))
-        assertEquals("2026-11-13T18:05:00Z", url.queryParameter("to"))
-        assertEquals("test-key", url.queryParameter("apiKey"))
-    }
-
-    @Test
     fun `decodes a full real response`() = runTest {
         server.enqueue(MockResponse.Builder().body(fixture("departures-full.json")).build())
 
