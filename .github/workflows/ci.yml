@@ -16,7 +16,7 @@ jobs:
           distribution: temurin
           java-version: 21
       - uses: gradle/actions/setup-gradle@v6
-      - run: ./gradlew ktlintCheck lintDebug verifyRoborazziDebug assembleDebug
+      - run: ./gradlew ktlintCheck lintDebug verifyRoborazziDebug assembleRelease
       - uses: actions/upload-artifact@v7
         if: failure()
         with:
