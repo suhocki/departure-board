@@ -144,7 +144,7 @@ private fun LoadedContent(
 private val TimetableItem.key: String
     get() = when (this) {
         is TimetableItem.DateHeader -> "date:${date.toEpochDay()}"
-        is TimetableItem.Ride -> departure.id
+        is TimetableItem.Ride -> "ride:${departure.id}"
     }
 
 @Composable
