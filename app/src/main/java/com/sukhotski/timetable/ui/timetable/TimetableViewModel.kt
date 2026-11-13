@@ -35,6 +35,12 @@ class TimetableViewModel @Inject constructor(
         load()
     }
 
+    /** Called when the app comes back to the foreground. */
+    fun refreshIfStale() {
+        val loaded = _state.value as? TimetableUiState.Loaded ?: return
+        if (Duration.between(loaded.updatedAt, clock.instant()) > STALE_AFTER) load()
+    }
+
     private fun load() {
         if (loadJob?.isActive == true) return
         val previous = _state.value as? TimetableUiState.Loaded
@@ -57,5 +63,6 @@ class TimetableViewModel @Inject constructor(
         /** Berlin central bus station. */
         const val STATION_ID = "dcbaaee6-9603-11e6-9066-549f350fcb0c"
         val WINDOW: Duration = Duration.ofHours(2)
+        val STALE_AFTER: Duration = Duration.ofMinutes(1)
     }
 }

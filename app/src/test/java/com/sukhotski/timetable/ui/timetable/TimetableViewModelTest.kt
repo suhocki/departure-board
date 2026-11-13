@@ -209,5 +209,43 @@ class TimetableViewModelTest {
         }
     }
 
+    @Test
+    fun `refreshes stale data on return`() = runTest {
+        repository.results += LoadResult.Success(timetable)
+        repository.results += LoadResult.Success(newerTimetable)
+        val viewModel = createViewModel()
+        advanceUntilIdle()
+
+        clock.advanceBy(Duration.ofSeconds(61))
+        viewModel.refreshIfStale()
+        advanceUntilIdle()
+
+        assertEquals(2, repository.calls.size)
+        assertEquals(start + Duration.ofMinutes(1), repository.calls.last().from)
+    }
+
+    @Test
+    fun `does not refresh fresh data on return`() = runTest {
+        repository.results += LoadResult.Success(timetable)
+        val viewModel = createViewModel()
+        advanceUntilIdle()
+        clock.advanceBy(Duration.ofSeconds(59))
+
+        viewModel.refreshIfStale()
+        advanceUntilIdle()
+
+        assertEquals(1, repository.calls.size)
+
+        repository.results += LoadResult.Failure(LoadError.Unexpected)
+        val failedViewModel = createViewModel()
+        advanceUntilIdle()
+        clock.advanceBy(Duration.ofHours(1))
+
+        failedViewModel.refreshIfStale()
+        advanceUntilIdle()
+
+        assertEquals(2, repository.calls.size)
+    }
+
     private fun createViewModel() = TimetableViewModel(repository, clock)
 }
