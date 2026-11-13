@@ -52,7 +52,8 @@ fun TimetableScreen(
             TopAppBar(
                 title = { Text(stringResource(R.string.timetable_title)) },
                 actions = {
-                    IconButton(onClick = onRefresh) {
+                    // During the first load a refresh would be skipped anyway.
+                    IconButton(onClick = onRefresh, enabled = state != TimetableUiState.Loading) {
                         Icon(
                             painterResource(R.drawable.ic_refresh),
                             contentDescription = stringResource(R.string.action_refresh),

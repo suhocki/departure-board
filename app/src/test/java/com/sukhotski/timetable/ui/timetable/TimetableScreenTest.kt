@@ -1,8 +1,13 @@
 package com.sukhotski.timetable.ui.timetable
 
 import android.content.Context
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.test.assertCountEquals
 import androidx.compose.ui.test.assertIsDisplayed
+import androidx.compose.ui.test.assertIsEnabled
+import androidx.compose.ui.test.assertIsNotEnabled
 import androidx.compose.ui.test.getUnclippedBoundsInRoot
 import androidx.compose.ui.test.hasAnyAncestor
 import androidx.compose.ui.test.hasScrollToIndexAction
@@ -90,6 +95,27 @@ class TimetableScreenTest {
             context.getString(R.string.loading_description),
         ).assertExists()
         composeRule.onNodeWithText("Berlin central bus station").assertDoesNotExist()
+    }
+
+    @Test
+    fun `refresh action is disabled only while loading`() {
+        var state by mutableStateOf<TimetableUiState>(TimetableUiState.Loading)
+        composeRule.setContent {
+            TimetableTheme {
+                TimetableScreen(
+                    state = state,
+                    onRefresh = {},
+                    formatter = TimeFormatter(is24Hour = true, Locale.US),
+                )
+            }
+        }
+        val refresh = composeRule.onNodeWithContentDescription(
+            context.getString(R.string.action_refresh),
+        )
+
+        refresh.assertIsNotEnabled()
+        state = PreviewData.content
+        refresh.assertIsEnabled()
     }
 
     @Test
