@@ -94,7 +94,6 @@ private fun LoadedContent(
     val station = state.timetable.station
     val hours = state.window.toHours().toInt()
     Column(modifier) {
-        StationHeader(station, state.updatedAt, hours, formatter)
         state.refreshError?.let {
             RefreshErrorBanner(it, dataTime = formatter.time(state.updatedAt, station.zone))
         }
@@ -106,9 +105,13 @@ private fun LoadedContent(
             val items = remember(state.timetable, state.updatedAt) {
                 timetableItems(state.timetable, state.updatedAt)
             }
+            // The header scrolls with the rows, so large fonts and landscape keep room for the list.
             LazyColumn(state = listState, modifier = Modifier.fillMaxSize()) {
+                item(key = "header") { StationHeader(station, state.updatedAt, hours, formatter) }
                 if (items.isEmpty()) {
-                    item { EmptyContent(hours, Modifier.fillParentMaxSize()) }
+                    item {
+                        EmptyContent(hours, Modifier.fillParentMaxWidth().fillParentMaxHeight(0.7f))
+                    }
                 }
                 itemsIndexed(
                     items = items,

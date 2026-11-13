@@ -4,6 +4,8 @@ import android.content.Context
 import androidx.compose.ui.test.assertCountEquals
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.getUnclippedBoundsInRoot
+import androidx.compose.ui.test.hasAnyAncestor
+import androidx.compose.ui.test.hasScrollToIndexAction
 import androidx.compose.ui.test.hasText
 import androidx.compose.ui.test.isHeading
 import androidx.compose.ui.test.junit4.v2.createComposeRule
@@ -54,6 +56,15 @@ class TimetableScreenTest {
         composeRule.onNodeWithText(
             context.resources.getQuantityString(R.plurals.header_caption, 2, 2, "23:05", "UTC+1"),
         ).assertIsDisplayed()
+    }
+
+    @Test
+    fun `station header scrolls with the list`() {
+        setScreen(PreviewData.content)
+
+        composeRule.onNode(
+            hasText("Berlin central bus station") and hasAnyAncestor(hasScrollToIndexAction()),
+        ).assertExists()
     }
 
     @Test
