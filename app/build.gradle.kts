@@ -1,6 +1,7 @@
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.compose)
+    alias(libs.plugins.ktlint)
 }
 
 android {
@@ -24,6 +25,23 @@ android {
     buildFeatures {
         compose = true
     }
+    lint {
+        warningsAsErrors = true
+        abortOnError = true
+        // Versions are pinned on purpose. Updates are a separate change.
+        disable += setOf("GradleDependency", "NewerVersionAvailable", "AndroidGradlePluginVersion")
+    }
+}
+
+kotlin {
+    compilerOptions {
+        allWarningsAsErrors = true
+    }
+}
+
+ktlint {
+    version.set(libs.versions.ktlint)
+    android.set(true)
 }
 
 dependencies {
