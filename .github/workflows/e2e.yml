@@ -17,6 +17,8 @@ jobs:
     timeout-minutes: 45
     steps:
       - uses: actions/checkout@v7
+      - name: Free disk space
+        run: sudo rm -rf /usr/share/dotnet /opt/ghc /usr/local/share/boost "$AGENT_TOOLSDIRECTORY"
       - uses: actions/setup-java@v6
         with:
           distribution: temurin
@@ -44,9 +46,10 @@ jobs:
           arch: x86_64
           profile: pixel_5
           ram-size: 4096M
+          disk-size: 4096M
           emulator-boot-timeout: 1200
           force-avd-creation: false
-          emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim
+          emulator-options: -no-metrics -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim
           disable-animations: false
           script: echo "AVD snapshot generated"
       - name: Run instrumented tests
@@ -57,9 +60,10 @@ jobs:
           arch: x86_64
           profile: pixel_5
           ram-size: 4096M
+          disk-size: 4096M
           emulator-boot-timeout: 1200
           force-avd-creation: false
-          emulator-options: -no-snapshot-save -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim
+          emulator-options: -no-metrics -no-snapshot-save -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim
           disable-animations: true
           script: ./gradlew connectedDebugAndroidTest
       - uses: actions/upload-artifact@v7
