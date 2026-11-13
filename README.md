@@ -66,7 +66,7 @@ Times are shown in the station's time zone, whatever zone the phone is in.
 | Delay above 30 minutes | `Expected HH:mm` instead of minutes | `DepartureRowTest.delay above 30 minutes shows expected time` |
 | Cancelled ride | Struck time and "Cancelled" | `DepartureRowTest.cancelled ride shows the word and a struck time` |
 | 401, 400, 404 with empty body, 503, broken JSON, 204 without body | "Something went wrong" with Retry | `TimetableRepositoryTest.maps ...` tests |
-| No network | "No connection" with Retry | `TimetableRepositoryTest.maps connection failure to no connection` |
+| No network, or no full answer in 15 s | "No connection" with Retry | `TimetableRepositoryTest.maps connection failure to no connection`, `TimetableRepositoryTest.maps call timeout on a slow body to no connection` |
 | Refresh fails with a list on screen | List stays, banner with the data time | `TimetableViewModelTest.failed refresh keeps content and sets refresh error`, `TimetableScreenTest.failed refresh shows banner above the list` |
 | Empty response | "No departures", pull to refresh still works | `TimetableScreenTest.empty shows message` |
 | 200% font size | Nothing is cut, the status wraps | screenshot `content_font_2x` |
@@ -76,13 +76,14 @@ In production both would go to crash reporting as non-fatals, from `TimetableMap
 
 ## Tests
 
-87 JVM tests, 5 of them screenshot tests, no emulator needed:
+95 JVM tests, 5 of them screenshot tests, no emulator needed:
 
 - Pure unit tests: domain, JSON models, mapper, time formatting, date headers.
 - Repository on real OkHttp, Retrofit and MockWebServer, with saved real API responses in `app/src/test/resources/fixtures`.
 - The production `NetworkModule` client and API with a fake transport: base URL, path and API key.
 - ViewModel with a fake repository, a mutable clock and Turbine.
-- Compose UI tests on Robolectric for the row and the screen, including TalkBack descriptions.
+- Compose UI tests on Robolectric for the row and the screen, including TalkBack descriptions,
+  and for the formatter built from the device locale and 12/24 hour setting.
 - Roborazzi screenshots in `app/src/test/screenshots`: content, dark, 200% font, empty, no connection.
   `./gradlew verifyRoborazziDebug` compares them and also runs all unit tests.
 
@@ -91,7 +92,8 @@ These were checked by hand on an emulator. Instrumented tests are the next step;
 
 ## Not done on purpose
 
-- Auto-refresh on a timer: easy to get wrong with the lifecycle. `refresh()` is ready for it.
+- Auto-refresh on a timer: left out to keep to the task scope, see Next steps. The data time in the header
+  and the reload on return to the app cover the common case.
 - Offline cache: an old timetable misleads. The HTTP cache does not help because `from` changes every time.
 - Station picker, arrivals, ride details: the screen asks for one list.
 - Modules and KMP: one screen. A split would be `:core:domain`, `:data:timetable`, `:feature:timetable`.
@@ -112,4 +114,5 @@ These were checked by hand on an emulator. Instrumented tests are the next step;
 I used AI while building this, under my supervision at both the high level and the low level.
 
 The design and a commit-by-commit plan came first. The app was then built from that plan in one
-evening, one tested commit at a time. The commits after "Add README" are fixes from a code review.
+evening, one tested commit at a time, so the commit times are only minutes apart.
+The commits after "Add README" are fixes from two code review rounds.
