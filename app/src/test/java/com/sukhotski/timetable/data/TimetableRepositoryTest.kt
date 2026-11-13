@@ -83,6 +83,71 @@ class TimetableRepositoryTest {
         )
     }
 
+    @Test
+    fun `maps 401 to unexpected`() = runTest {
+        enqueue(401, fixture("error-401.txt"), contentType = "text/plain")
+
+        assertEquals(
+            LoadResult.Failure(LoadError.Unexpected),
+            repository.departures("station-1", from, to),
+        )
+    }
+
+    @Test
+    fun `maps 400 with json body to unexpected`() = runTest {
+        enqueue(400, fixture("error-400.json"))
+
+        assertEquals(
+            LoadResult.Failure(LoadError.Unexpected),
+            repository.departures("station-1", from, to),
+        )
+    }
+
+    @Test
+    fun `maps 404 with empty body to unexpected`() = runTest {
+        enqueue(404, "")
+
+        assertEquals(
+            LoadResult.Failure(LoadError.Unexpected),
+            repository.departures("station-1", from, to),
+        )
+    }
+
+    @Test
+    fun `maps 503 to unexpected`() = runTest {
+        enqueue(503, "Service Unavailable", contentType = "text/plain")
+
+        assertEquals(
+            LoadResult.Failure(LoadError.Unexpected),
+            repository.departures("station-1", from, to),
+        )
+    }
+
+    @Test
+    fun `maps connection failure to no connection`() = runTest {
+        server.close()
+
+        assertEquals(
+            LoadResult.Failure(LoadError.NoConnection),
+            repository.departures("station-1", from, to),
+        )
+    }
+
+    @Test
+    fun `maps malformed body to unexpected`() = runTest {
+        enqueue(200, "not json")
+        enqueue(200, "")
+
+        assertEquals(
+            LoadResult.Failure(LoadError.Unexpected),
+            repository.departures("station-1", from, to),
+        )
+        assertEquals(
+            LoadResult.Failure(LoadError.Unexpected),
+            repository.departures("station-1", from, to),
+        )
+    }
+
     private fun enqueue(code: Int, body: String, contentType: String = "application/json") {
         server.enqueue(
             MockResponse.Builder()
