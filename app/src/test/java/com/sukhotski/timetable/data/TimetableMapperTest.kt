@@ -1,7 +1,7 @@
 package com.sukhotski.timetable.data
 
-import com.sukhotski.timetable.data.remote.TimetableJson
 import com.sukhotski.timetable.data.remote.TimetableResponse
+import com.sukhotski.timetable.data.remote.timetableJson
 import com.sukhotski.timetable.domain.Departure
 import com.sukhotski.timetable.domain.DepartureStatus
 import com.sukhotski.timetable.domain.Timetable
@@ -181,7 +181,7 @@ class TimetableMapperTest {
     }
 
     private fun mapOrNull(json: String): Timetable? =
-        TimetableJson.decodeFromString<TimetableResponse>(json).toTimetable()
+        timetableJson.decodeFromString<TimetableResponse>(json).toTimetable()
 
     private fun map(json: String): Timetable = checkNotNull(mapOrNull(json))
 

@@ -69,7 +69,7 @@ object LenientRideListSerializer : KSerializer<List<RideDto>> {
     override fun serialize(encoder: Encoder, value: List<RideDto>) = rides.serialize(encoder, value)
 }
 
-val TimetableJson = Json {
+val timetableJson = Json {
     ignoreUnknownKeys = true
     coerceInputValues = true
 }

@@ -38,10 +38,10 @@ fun LoadingContent(modifier: Modifier = Modifier) {
 fun ErrorContent(error: LoadError, onRetry: () -> Unit, modifier: Modifier = Modifier) {
     val (title, body) = when (error) {
         LoadError.NoConnection ->
-            R.string.error_no_connection_title to
-                R.string.error_no_connection_body
+            R.string.error_no_connection_title to R.string.error_no_connection_body
 
-        LoadError.Unexpected -> R.string.error_unexpected_title to R.string.error_unexpected_body
+        LoadError.Unexpected ->
+            R.string.error_unexpected_title to R.string.error_unexpected_body
     }
     Column(
         modifier = modifier

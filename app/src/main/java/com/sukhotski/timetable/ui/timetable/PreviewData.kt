@@ -10,7 +10,10 @@ import java.time.Instant
 import java.time.ZoneId
 import java.time.ZoneOffset
 
-/** One data set for previews, UI tests and screenshots. Friday 2026-11-13, 23:05 in Berlin. */
+/**
+ * One data set for previews, UI tests and screenshots. Friday 2026-11-13, 23:05 in Berlin.
+ * It lives in main because previews need it. Nothing in the app uses it, so R8 removes it.
+ */
 object PreviewData {
     private val station =
         Station("Berlin central bus station", ZoneId.of("Europe/Berlin"), zoneIsFallback = false)

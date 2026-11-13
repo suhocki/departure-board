@@ -207,7 +207,10 @@ fun rememberTimeFormatter(): TimeFormatter {
 @Composable
 private fun TimetableScreenPreview() {
     TimetableTheme {
-        TimetableScreen(PreviewData.content, onRefresh = {
-        }, formatter = TimeFormatter(is24Hour = true, Locale.US))
+        TimetableScreen(
+            state = PreviewData.content,
+            onRefresh = {},
+            formatter = TimeFormatter(is24Hour = true, Locale.US),
+        )
     }
 }

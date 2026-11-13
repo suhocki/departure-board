@@ -22,6 +22,6 @@ interface TimetableApi {
 fun createTimetableApi(baseUrl: HttpUrl, client: OkHttpClient): TimetableApi = Retrofit.Builder()
     .baseUrl(baseUrl)
     .client(client)
-    .addConverterFactory(TimetableJson.asConverterFactory("application/json".toMediaType()))
+    .addConverterFactory(timetableJson.asConverterFactory("application/json".toMediaType()))
     .build()
     .create(TimetableApi::class.java)

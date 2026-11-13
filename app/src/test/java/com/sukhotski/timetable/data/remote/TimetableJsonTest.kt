@@ -47,5 +47,5 @@ class TimetableJsonTest {
         )
     }
 
-    private fun decode(json: String): TimetableResponse = TimetableJson.decodeFromString(json)
+    private fun decode(json: String): TimetableResponse = timetableJson.decodeFromString(json)
 }
