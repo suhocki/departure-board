@@ -29,5 +29,23 @@ class TimetableTest {
         )
     }
 
+    @Test
+    fun `delay is floored to whole minutes`() {
+        val scheduled = at("2026-11-13T15:10:00Z")
+
+        assertEquals(0, delayMinutes(scheduled, scheduled))
+        assertEquals(0, delayMinutes(scheduled, scheduled.plusSeconds(59)))
+        assertEquals(1, delayMinutes(scheduled, scheduled.plusSeconds(60)))
+        assertEquals(1, delayMinutes(scheduled, scheduled.plusSeconds(119)))
+        assertEquals(74, delayMinutes(scheduled, at("2026-11-13T16:24:36Z")))
+    }
+
+    @Test
+    fun `delay is never negative`() {
+        val scheduled = at("2026-11-13T15:10:00Z")
+
+        assertEquals(0, delayMinutes(scheduled, scheduled.minusSeconds(5 * 60)))
+    }
+
     private fun at(text: String): Instant = Instant.parse(text)
 }

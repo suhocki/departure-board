@@ -1,5 +1,6 @@
 package com.sukhotski.timetable.domain
 
+import java.time.Duration
 import java.time.Instant
 import java.time.ZoneId
 
@@ -26,3 +27,7 @@ sealed interface DepartureStatus {
 }
 
 val departureOrder: Comparator<Departure> = compareBy({ it.scheduled }, { it.lineCode }, { it.id })
+
+/** Whole minutes from [scheduled] to [expected], rounded down and never negative. */
+fun delayMinutes(scheduled: Instant, expected: Instant): Long =
+    Duration.between(scheduled, expected).toMinutes().coerceAtLeast(0)
