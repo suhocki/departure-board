@@ -235,16 +235,20 @@ class TimetableViewModelTest {
         advanceUntilIdle()
 
         assertEquals(1, repository.calls.size)
+    }
 
-        repository.results += LoadResult.Failure(LoadError.Unexpected)
-        val failedViewModel = createViewModel()
+    @Test
+    fun `retries after error on return`() = runTest {
+        repository.results += LoadResult.Failure(LoadError.NoConnection)
+        repository.results += LoadResult.Success(timetable)
+        val viewModel = createViewModel()
         advanceUntilIdle()
-        clock.advanceBy(Duration.ofHours(1))
 
-        failedViewModel.refreshIfStale()
+        viewModel.refreshIfStale()
         advanceUntilIdle()
 
         assertEquals(2, repository.calls.size)
+        assertEquals(TimetableUiState.Loaded(timetable, updatedAt = start), viewModel.state.value)
     }
 
     private fun createViewModel() = TimetableViewModel(repository, clock)

@@ -35,10 +35,19 @@ class TimetableViewModel @Inject constructor(
         load()
     }
 
-    /** Called when the app comes back to the foreground. */
+    /**
+     * Called when the app comes back to the foreground. An error is retried: the user may have
+     * just turned the network on. Data older than [STALE_AFTER] is reloaded.
+     */
     fun refreshIfStale() {
-        val loaded = _state.value as? TimetableUiState.Loaded ?: return
-        if (Duration.between(loaded.updatedAt, clock.instant()) > STALE_AFTER) load()
+        when (val state = _state.value) {
+            TimetableUiState.Loading -> Unit
+
+            is TimetableUiState.Error -> load()
+
+            is TimetableUiState.Loaded ->
+                if (Duration.between(state.updatedAt, clock.instant()) > STALE_AFTER) load()
+        }
     }
 
     private fun load() {
