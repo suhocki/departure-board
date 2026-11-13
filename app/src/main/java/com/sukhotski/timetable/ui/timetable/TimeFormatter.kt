@@ -9,15 +9,16 @@ import java.util.Locale
 import kotlin.math.abs
 
 /**
- * Explicit patterns, not localized styles: they follow the device 12/24 hour switch
- * and give the same text on every JDK and device.
+ * Explicit time patterns, not localized styles: they follow the device 12/24 hour switch
+ * and give the same text on every JDK and device. The date pattern comes from the device
+ * locale (see rememberTimeFormatter), the default is for tests and previews.
  */
-class TimeFormatter(is24Hour: Boolean, locale: Locale) {
+class TimeFormatter(is24Hour: Boolean, locale: Locale, datePattern: String = "EEEE, d MMMM") {
     private val timeFormat = DateTimeFormatter.ofPattern(
         if (is24Hour) "HH:mm" else "h:mm a",
         locale,
     )
-    private val dateFormat = DateTimeFormatter.ofPattern("EEEE, d MMMM", locale)
+    private val dateFormat = DateTimeFormatter.ofPattern(datePattern, locale)
 
     fun time(instant: Instant, zone: ZoneId): String = timeFormat.format(instant.atZone(zone))
 

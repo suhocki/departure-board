@@ -45,6 +45,7 @@ Times are shown in the station's time zone, whatever zone the phone is in.
 | Delay is decided by the timestamp, not `deviation_class` | The timestamp is a fact, an unknown class cannot break it | Trusting the class |
 | Caption `UTC+1`, computed from the offset | `CET`, `MEZ` and `GMT+1` differ between JVM, locale and Android | Zone abbreviations |
 | Explicit `HH:mm` / `h:mm a` patterns, 12/24h from the device | Localized styles ignore the 12/24h switch and differ between JDKs | `ofLocalizedTime` |
+| Date header pattern from the locale (`getBestDateTimePattern`) | `Saturday, November 14` in the US, `Samstag, 14. November` in Germany | One fixed pattern for all locales |
 | `Clock` injected, read only in the ViewModel | Windows, the stale check and dates are testable | `Instant.now()` |
 | Failed refresh is state (`refreshError`), not a one-off event | Survives rotation, no `Channel` needed | Snackbar |
 | A refresh while a request runs is skipped | Same request, no duplicates | Cancelling the running request |

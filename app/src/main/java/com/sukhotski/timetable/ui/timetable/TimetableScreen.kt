@@ -196,7 +196,11 @@ private fun DateHeader(text: String) {
 fun rememberTimeFormatter(): TimeFormatter {
     val is24Hour = DateFormat.is24HourFormat(LocalContext.current)
     val locale: Locale = LocalConfiguration.current.locales[0]
-    return remember(is24Hour, locale) { TimeFormatter(is24Hour, locale) }
+    return remember(is24Hour, locale) {
+        // Weekday, day and month in the order and punctuation of the locale.
+        val datePattern = DateFormat.getBestDateTimePattern(locale, "EEEEdMMMM")
+        TimeFormatter(is24Hour, locale, datePattern)
+    }
 }
 
 @Preview

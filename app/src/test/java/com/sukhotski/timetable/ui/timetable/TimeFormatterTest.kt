@@ -70,6 +70,13 @@ class TimeFormatterTest {
     }
 
     @Test
+    fun `formats date header with the given pattern`() {
+        val us = TimeFormatter(is24Hour = false, Locale.US, datePattern = "EEEE, MMMM d")
+
+        assertEquals("Saturday, November 14", us.date(LocalDate.of(2026, 11, 14)))
+    }
+
+    @Test
     fun `formats utc offset`() {
         assertEquals("UTC+1", formatUtcOffset(ZoneOffset.ofHours(1)))
         assertEquals("UTC+5:30", formatUtcOffset(ZoneOffset.ofHoursMinutes(5, 30)))
