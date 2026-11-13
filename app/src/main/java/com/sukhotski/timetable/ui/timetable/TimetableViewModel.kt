@@ -44,7 +44,7 @@ class TimetableViewModel @Inject constructor(
      * just turned the network on. Data older than [STALE_AFTER] is reloaded.
      */
     fun refreshIfStale() {
-        when (val state = _state.value) {
+        when (_state.value) {
             TimetableUiState.Loading -> Unit
 
             is TimetableUiState.Error -> load()
