@@ -18,6 +18,7 @@ Times are shown in the station's time zone, whatever zone the phone is in.
    ./gradlew installDebug          # build and install on a device or emulator
    ./gradlew testDebugUnitTest     # all tests, on the JVM, no emulator, no network
    ./gradlew recordRoborazziDebug  # re-record the screenshot goldens after a UI change
+   ./gradlew connectedDebugAndroidTest  # end-to-end tests, needs a running emulator or device
    ```
 
 ## What it does
@@ -90,7 +91,7 @@ In production both would go to crash reporting as non-fatals, from `TimetableMap
 
 ## Tests
 
-95 tests, all on the JVM (Robolectric for Android parts), no emulator, no network:
+95 tests on the JVM (Robolectric for Android parts), no emulator, no network, and 8 instrumented tests on an emulator:
 
 | Type | Count | What |
 |---|---|---|
@@ -99,6 +100,7 @@ In production both would go to crash reporting as non-fatals, from `TimetableMap
 | ViewModel | 15 | Fake repository, mutable clock, Turbine |
 | Compose UI | 29 | Row and screen on Robolectric, TalkBack descriptions, the formatter built from device locale and 12/24h setting |
 | Screenshot | 5 | Roborazzi goldens in `app/src/test/screenshots`: content, dark, 200% font, empty, no connection |
+| Instrumented | 8 | Real Activity, ViewModel, OkHttp and Retrofit on an emulator, against MockWebServer (`app/src/androidTest`) |
 
 ```
 ./gradlew testDebugUnitTest      # all 95
@@ -107,9 +109,11 @@ In production both would go to crash reporting as non-fatals, from `TimetableMap
 
 CI runs `ktlintCheck lintDebug verifyRoborazziDebug assembleRelease` on every push.
 
-There are no instrumented tests yet. The real API, the pull gesture, `onStart` calling the stale check, rotation and
-process death were checked by hand on an emulator. Instrumented tests are the next step; the API factory, the Hilt
-modules and the clock are the seams.
+The 95 above do not include the instrumented ones. They run the real `MainActivity` with Hilt, and only the base URL
+and the `Clock` are replaced (`TestAppModule`), so production code is the same. They cover cold start, error then Retry,
+pull to refresh, rotation without a new request, return after the stale time, relaunch, delayed and cancelled rows.
+Debug builds allow cleartext to `localhost` for the mock server. Run them with `./gradlew connectedDebugAndroidTest`
+on an emulator with Android 8.0 or newer, or start the manual `E2E` workflow on GitHub. They are not part of CI.
 
 ## Not done on purpose
 
