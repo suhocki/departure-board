@@ -35,7 +35,12 @@ fun LoadingContent(modifier: Modifier = Modifier) {
 }
 
 @Composable
-fun ErrorContent(error: LoadError, onRetry: () -> Unit, modifier: Modifier = Modifier) {
+fun ErrorContent(
+    error: LoadError,
+    onRetry: () -> Unit,
+    modifier: Modifier = Modifier,
+    apiKeyMissing: Boolean = false,
+) {
     val (title, body) = when (error) {
         LoadError.NoConnection ->
             R.string.error_no_connection_title to R.string.error_no_connection_body
@@ -62,6 +67,16 @@ fun ErrorContent(error: LoadError, onRetry: () -> Unit, modifier: Modifier = Mod
             color = MaterialTheme.colorScheme.onSurfaceVariant,
             textAlign = TextAlign.Center,
         )
+        // Without the key every request is a 401, so the only error is Unexpected.
+        if (apiKeyMissing && error == LoadError.Unexpected) {
+            Spacer(Modifier.height(8.dp))
+            Text(
+                text = stringResource(R.string.error_api_key_missing),
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.error,
+                textAlign = TextAlign.Center,
+            )
+        }
         Spacer(Modifier.height(16.dp))
         Button(onClick = onRetry) {
             Text(stringResource(R.string.action_retry))

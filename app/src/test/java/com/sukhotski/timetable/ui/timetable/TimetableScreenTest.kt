@@ -255,13 +255,34 @@ class TimetableScreenTest {
         composeRule.onAllNodesWithText("November", substring = true).assertCountEquals(1)
     }
 
-    private fun setScreen(state: TimetableUiState, onRefresh: () -> Unit = {}) {
+    @Test
+    fun `missing api key shows a hint on the unexpected error`() {
+        setScreen(PreviewData.errorUnexpected, apiKeyMissing = true)
+
+        composeRule.onNodeWithText(context.getString(R.string.error_api_key_missing))
+            .assertIsDisplayed()
+    }
+
+    @Test
+    fun `no api key hint on the no connection error`() {
+        setScreen(PreviewData.errorNoConnection, apiKeyMissing = true)
+
+        composeRule.onNodeWithText(context.getString(R.string.error_api_key_missing))
+            .assertDoesNotExist()
+    }
+
+    private fun setScreen(
+        state: TimetableUiState,
+        onRefresh: () -> Unit = {},
+        apiKeyMissing: Boolean = false,
+    ) {
         composeRule.setContent {
             TimetableTheme {
                 TimetableScreen(
                     state,
                     onRefresh = onRefresh,
                     formatter = TimeFormatter(is24Hour = true, Locale.US),
+                    apiKeyMissing = apiKeyMissing,
                 )
             }
         }

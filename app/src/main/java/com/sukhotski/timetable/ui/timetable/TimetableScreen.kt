@@ -44,6 +44,7 @@ fun TimetableScreen(
     onRefresh: () -> Unit,
     modifier: Modifier = Modifier,
     formatter: TimeFormatter = rememberTimeFormatter(),
+    apiKeyMissing: Boolean = false,
 ) {
     val listState = rememberLazyListState()
     Scaffold(
@@ -75,7 +76,12 @@ fun TimetableScreen(
             TimetableUiState.Loading -> LoadingContent(contentModifier)
 
             is TimetableUiState.Error ->
-                ErrorContent(state.error, onRetry = onRefresh, modifier = contentModifier)
+                ErrorContent(
+                    state.error,
+                    onRetry = onRefresh,
+                    modifier = contentModifier,
+                    apiKeyMissing = apiKeyMissing,
+                )
 
             is TimetableUiState.Loaded ->
                 LoadedContent(state, onRefresh, listState, formatter, contentModifier)

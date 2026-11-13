@@ -12,7 +12,7 @@ Times are shown in the station's time zone, whatever zone the phone is in.
    ```
    timetableApiKey=<the key from the task>
    ```
-   Without it the build prints a warning and the app shows "Something went wrong". Tests do not need it.
+   Without it the build prints a warning, and a debug build says so on the error screen. Tests do not need it.
 2. Build and run. Android Studio 2025.3 or newer, JDK 21, a device or emulator with Android 8.0 (API 26) or newer.
    ```
    ./gradlew installDebug          # build and install on a device or emulator

@@ -32,6 +32,8 @@
     <string name="error_no_connection_body">Check your internet connection and try again.</string>
     <string name="error_unexpected_title">Something went wrong</string>
     <string name="error_unexpected_body">We could not load the departures. Please try again.</string>
+    <!-- Debug builds only, for a developer who has not added the key yet. -->
+    <string name="error_api_key_missing" translatable="false">Debug build without an API key, see README.</string>
     <string name="banner_no_connection">No connection. Showing departures from %1$s.</string>
     <string name="banner_unexpected">Could not refresh. Showing departures from %1$s.</string>
 </resources>

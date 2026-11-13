@@ -23,7 +23,11 @@ class MainActivity : ComponentActivity() {
         setContent {
             TimetableTheme {
                 val state by viewModel.state.collectAsStateWithLifecycle()
-                TimetableScreen(state = state, onRefresh = viewModel::refresh)
+                TimetableScreen(
+                    state = state,
+                    onRefresh = viewModel::refresh,
+                    apiKeyMissing = BuildConfig.DEBUG && BuildConfig.TIMETABLE_API_KEY.isEmpty(),
+                )
             }
         }
     }
