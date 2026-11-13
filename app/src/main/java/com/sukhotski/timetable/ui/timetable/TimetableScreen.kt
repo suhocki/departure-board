@@ -36,6 +36,7 @@ import java.util.Locale
 @Composable
 fun TimetableScreen(
     state: TimetableUiState,
+    onRefresh: () -> Unit,
     modifier: Modifier = Modifier,
     formatter: TimeFormatter = rememberTimeFormatter(),
 ) {
@@ -50,7 +51,10 @@ fun TimetableScreen(
             .fillMaxSize()
             .padding(padding)
         when (state) {
-            TimetableUiState.Loading, is TimetableUiState.Error -> Unit
+            TimetableUiState.Loading -> LoadingContent(contentModifier)
+
+            is TimetableUiState.Error ->
+                ErrorContent(state.error, onRetry = onRefresh, modifier = contentModifier)
 
             is TimetableUiState.Loaded -> LoadedContent(
                 state,
@@ -127,6 +131,7 @@ fun rememberTimeFormatter(): TimeFormatter {
 @Composable
 private fun TimetableScreenPreview() {
     TimetableTheme {
-        TimetableScreen(PreviewData.content, formatter = TimeFormatter(is24Hour = true, Locale.US))
+        TimetableScreen(PreviewData.content, onRefresh = {
+        }, formatter = TimeFormatter(is24Hour = true, Locale.US))
     }
 }

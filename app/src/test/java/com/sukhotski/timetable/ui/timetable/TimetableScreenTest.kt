@@ -5,12 +5,15 @@ import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.hasText
 import androidx.compose.ui.test.isHeading
 import androidx.compose.ui.test.junit4.v2.createComposeRule
+import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithText
+import androidx.compose.ui.test.performClick
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.sukhotski.timetable.R
 import com.sukhotski.timetable.ui.theme.TimetableTheme
 import java.util.Locale
+import org.junit.Assert.assertEquals
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -58,11 +61,50 @@ class TimetableScreenTest {
         composeRule.onNodeWithText("22:30").assertIsDisplayed()
     }
 
-    private fun setScreen(state: TimetableUiState) {
+    @Test
+    fun `loading shows progress`() {
+        setScreen(TimetableUiState.Loading)
+
+        composeRule.onNodeWithContentDescription(
+            context.getString(R.string.loading_description),
+        ).assertExists()
+        composeRule.onNodeWithText("Berlin central bus station").assertDoesNotExist()
+    }
+
+    @Test
+    fun `error shows message and retry calls back`() {
+        var refreshes = 0
+        setScreen(PreviewData.errorNoConnection, onRefresh = { refreshes++ })
+
+        composeRule.onNodeWithText(
+            context.getString(R.string.error_no_connection_title),
+        ).assertIsDisplayed()
+        composeRule.onNodeWithText(
+            context.getString(R.string.error_no_connection_body),
+        ).assertIsDisplayed()
+        composeRule.onNodeWithText(context.getString(R.string.action_retry)).performClick()
+
+        assertEquals(1, refreshes)
+    }
+
+    @Test
+    fun `unexpected error shows its own message`() {
+        setScreen(PreviewData.errorUnexpected)
+
+        composeRule.onNodeWithText(
+            context.getString(R.string.error_unexpected_title),
+        ).assertIsDisplayed()
+        composeRule.onNodeWithText(
+            context.getString(R.string.error_unexpected_body),
+        ).assertIsDisplayed()
+    }
+
+    private fun setScreen(state: TimetableUiState, onRefresh: () -> Unit = {}) {
         composeRule.setContent {
             TimetableTheme {
                 TimetableScreen(
                     state,
+                    onRefresh = onRefresh,
                     formatter = TimeFormatter(is24Hour = true, Locale.US),
                 )
             }

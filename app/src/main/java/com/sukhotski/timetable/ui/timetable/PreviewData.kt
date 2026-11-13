@@ -2,6 +2,7 @@ package com.sukhotski.timetable.ui.timetable
 
 import com.sukhotski.timetable.domain.Departure
 import com.sukhotski.timetable.domain.DepartureStatus
+import com.sukhotski.timetable.domain.LoadError
 import com.sukhotski.timetable.domain.Station
 import com.sukhotski.timetable.domain.Timetable
 import java.time.Instant
@@ -58,6 +59,10 @@ object PreviewData {
             station = station.copy(zone = ZoneOffset.UTC, zoneIsFallback = true),
         ),
     )
+
+    val errorNoConnection = TimetableUiState.Error(LoadError.NoConnection)
+
+    val errorUnexpected = TimetableUiState.Error(LoadError.Unexpected)
 
     private fun at(utcTime: String): Instant = Instant.parse("2026-11-13T${utcTime}Z")
 

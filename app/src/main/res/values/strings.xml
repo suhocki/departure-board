@@ -10,4 +10,10 @@
         <item quantity="one">Next %1$d hour · Times in UTC (station time zone unknown)</item>
         <item quantity="other">Next %1$d hours · Times in UTC (station time zone unknown)</item>
     </plurals>
+    <string name="action_retry">Retry</string>
+    <string name="loading_description">Loading departures</string>
+    <string name="error_no_connection_title">No connection</string>
+    <string name="error_no_connection_body">Check your internet connection and try again.</string>
+    <string name="error_unexpected_title">Something went wrong</string>
+    <string name="error_unexpected_body">We could not load the departures. Please try again.</string>
 </resources>
