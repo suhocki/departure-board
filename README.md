@@ -57,7 +57,7 @@ or pass `-PtimetableApiKey=<key>`, or set `TIMETABLE_API_KEY`. Tests do not need
 | Autumn DST night | Two rides can show the same `02:30`, the order is still real | `TimeFormatterTest.repeats the hour on autumn DST night`, `TimetableTest.orders by scheduled time then line code then id` |
 | Window crosses midnight | Date header `Saturday, 14 November` | `TimetableItemsTest.adds header before first ride of next day` |
 | Late ride from yesterday | Header for yesterday, then for today | `TimetableItemsTest.adds headers for a late ride from yesterday and for today after it` |
-| Ride without id, code, direction or a valid time | Dropped, other rides stay | `TimetableMapperTest.drops ride with unparseable scheduled time` and the other `drops ...` tests |
+| Ride without id, code, direction or a valid time, or with a wrong type | Dropped, other rides stay | `TimetableMapperTest.drops ride with unparseable scheduled time` and the other `drops ...` tests, `TimetableJsonTest.ride with a wrong type is dropped and the others stay` |
 | Duplicate ride ids | First one kept | `TimetableMapperTest.removes duplicate ride ids` |
 | Delay under one minute or early departure | Shown as scheduled | `TimetableMapperTest.ignores delay under one minute and early departure` |
 | Delay above 30 minutes | `Expected HH:mm` instead of minutes | `DepartureRowTest.delay above 30 minutes shows expected time` |

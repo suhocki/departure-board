@@ -28,5 +28,24 @@ class TimetableJsonTest {
         assertNull(partial.station)
     }
 
+    @Test
+    fun `ride with a wrong type is dropped and the others stay`() {
+        val response = decode(
+            """
+            {"rides":[
+              {"id":123},
+              {"id":"a","line":"N1"},
+              {"id":"b","line":{"code":60}},
+              {"id":"c","line":{"code":"N1","direction":"Hamburg"}}
+            ]}
+            """.trimIndent(),
+        )
+
+        assertEquals(
+            listOf(RideDto(id = "c", line = LineDto(code = "N1", direction = "Hamburg"))),
+            response.rides,
+        )
+    }
+
     private fun decode(json: String): TimetableResponse = TimetableJson.decodeFromString(json)
 }
