@@ -50,6 +50,7 @@ android {
     }
     testOptions {
         unitTests {
+            isIncludeAndroidResources = true
             all {
                 // A zone far from Europe, so code that reads the device zone fails on any laptop.
                 it.systemProperty("user.timezone", "Asia/Kolkata")
@@ -76,6 +77,7 @@ dependencies {
     implementation(libs.androidx.lifecycle.viewmodel)
     implementation(platform(libs.androidx.compose.bom))
     implementation(libs.androidx.compose.ui)
+    implementation(libs.androidx.compose.ui.tooling.preview)
     implementation(libs.androidx.compose.material3)
     implementation(libs.kotlinx.coroutines.android)
     implementation(libs.kotlinx.serialization.json)
@@ -89,4 +91,11 @@ dependencies {
     testImplementation(libs.kotlinx.coroutines.test)
     testImplementation(libs.okhttp.mockwebserver)
     testImplementation(libs.turbine)
+    testImplementation(libs.androidx.test.ext.junit)
+    testImplementation(libs.robolectric)
+    testImplementation(platform(libs.androidx.compose.bom))
+    testImplementation(libs.androidx.compose.ui.test.junit4)
+
+    debugImplementation(libs.androidx.compose.ui.tooling)
+    debugImplementation(libs.androidx.compose.ui.test.manifest)
 }
