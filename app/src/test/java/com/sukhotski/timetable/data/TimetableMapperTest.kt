@@ -2,8 +2,10 @@ package com.sukhotski.timetable.data
 
 import com.sukhotski.timetable.data.remote.TimetableJson
 import com.sukhotski.timetable.data.remote.TimetableResponse
+import com.sukhotski.timetable.domain.Departure
 import com.sukhotski.timetable.domain.Timetable
 import com.sukhotski.timetable.testing.fixture
+import com.sukhotski.timetable.testing.ridesJson
 import java.time.Instant
 import java.time.ZoneId
 import org.junit.Assert.assertEquals
@@ -48,10 +50,62 @@ class TimetableMapperTest {
         )
     }
 
+    @Test
+    fun `drops ride without id`() {
+        val departures = departures(
+            GOOD_RIDE,
+            """{"status":{"scheduled_timestamp":"2026-11-13T16:20:00Z"},"line":{"code":"N1","direction":"A"}}""",
+            """{"id":null,"status":{"scheduled_timestamp":"2026-11-13T16:20:00Z"},"line":{"code":"N1","direction":"A"}}""",
+            """{"id":" ","status":{"scheduled_timestamp":"2026-11-13T16:20:00Z"},"line":{"code":"N1","direction":"A"}}""",
+        )
+
+        assertEquals(listOf("good"), departures.map { it.id })
+    }
+
+    @Test
+    fun `drops ride with unparseable scheduled time`() {
+        val departures = departures(
+            GOOD_RIDE,
+            """{"id":"a","status":{"scheduled_timestamp":"2026-11-13T16:20:00"},"line":{"code":"N1","direction":"A"}}""",
+            """{"id":"b","status":{"scheduled_timestamp":""},"line":{"code":"N1","direction":"A"}}""",
+            """{"id":"c","status":{"scheduled_timestamp":null},"line":{"code":"N1","direction":"A"}}""",
+            """{"id":"d","status":{"scheduled_timestamp":"2026-02-30T10:00:00Z"},"line":{"code":"N1","direction":"A"}}""",
+            """{"id":"e","line":{"code":"N1","direction":"A"}}""",
+        )
+
+        assertEquals(listOf("good"), departures.map { it.id })
+    }
+
+    @Test
+    fun `drops ride with blank line code or direction`() {
+        val departures = departures(
+            GOOD_RIDE,
+            """{"id":"a","status":{"scheduled_timestamp":"2026-11-13T16:20:00Z"}}""",
+            """{"id":"b","status":{"scheduled_timestamp":"2026-11-13T16:20:00Z"},"line":{"code":null,"direction":"A"}}""",
+            """{"id":"c","status":{"scheduled_timestamp":"2026-11-13T16:20:00Z"},"line":{"code":"N1","direction":" "}}""",
+        )
+
+        assertEquals(listOf("good"), departures.map { it.id })
+    }
+
+    @Test
+    fun `removes duplicate ride ids`() {
+        val departures = departures(
+            GOOD_RIDE,
+            """{"id":"good","status":{"scheduled_timestamp":"2026-11-13T17:00:00Z"},"line":{"code":"N2","direction":"B"}}""",
+        )
+
+        assertEquals(1, departures.size)
+        assertEquals("N1338", departures.single().lineCode)
+    }
+
     private fun mapOrNull(json: String): Timetable? =
         TimetableJson.decodeFromString<TimetableResponse>(json).toTimetable()
 
     private fun map(json: String): Timetable = checkNotNull(mapOrNull(json))
+
+    private fun departures(vararg rides: String): List<Departure> =
+        map(ridesJson(*rides)).departures
 
     private companion object {
         const val GOOD_RIDE =

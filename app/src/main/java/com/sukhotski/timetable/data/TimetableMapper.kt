@@ -22,15 +22,21 @@ internal fun TimetableResponse.toTimetable(): Timetable? {
         station = Station(name = name, zone = zone, zoneIsFallback = false),
         departures = rides
             .mapNotNull { it.toDepartureOrNull() }
+            .distinctBy { it.id }
             .sortedWith(departureOrder),
     )
 }
 
+/** Returns null when a field the list needs is missing, blank or not parseable. */
 internal fun RideDto.toDepartureOrNull(): Departure? {
     val code = line?.code
     val direction = line?.direction
     val scheduled = parseInstantOrNull(status?.scheduledTimestamp)
-    if (id == null || code == null || direction == null || scheduled == null) return null
+    if (id.isNullOrBlank() || code.isNullOrBlank() || direction.isNullOrBlank() ||
+        scheduled == null
+    ) {
+        return null
+    }
     return Departure(
         id = id,
         lineCode = code,
