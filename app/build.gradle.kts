@@ -59,8 +59,14 @@ android {
     lint {
         warningsAsErrors = true
         abortOnError = true
-        // Versions are pinned on purpose. Updates are a separate change.
-        disable += setOf("GradleDependency", "NewerVersionAvailable", "AndroidGradlePluginVersion")
+        // Versions are pinned on purpose. Updates are a separate change. OldTargetApi depends on
+        // the newest SDK installed on the machine, so it fails on CI runners that have SDK 37.
+        disable += setOf(
+            "GradleDependency",
+            "NewerVersionAvailable",
+            "AndroidGradlePluginVersion",
+            "OldTargetApi",
+        )
     }
     testOptions {
         unitTests {
