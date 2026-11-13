@@ -79,6 +79,7 @@ Dropped rides are silent now. In production they would be reported to crash repo
 
 - Pure unit tests: domain, JSON models, mapper, time formatting, date headers.
 - Repository on real OkHttp, Retrofit and MockWebServer, with saved real API responses in `app/src/test/resources/fixtures`.
+- The production `NetworkModule` client and API with a fake transport: base URL, path and API key.
 - ViewModel with a fake repository, a mutable clock and Turbine.
 - Compose UI tests on Robolectric for the row and the screen, including TalkBack descriptions.
 - Roborazzi screenshots in `app/src/test/screenshots`: content, dark, 200% font, empty, no connection.
