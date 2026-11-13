@@ -42,6 +42,9 @@ jobs:
           api-level: 35
           target: google_apis
           arch: x86_64
+          profile: pixel_5
+          ram-size: 4096M
+          emulator-boot-timeout: 1200
           force-avd-creation: false
           emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim
           disable-animations: false
@@ -52,6 +55,9 @@ jobs:
           api-level: 35
           target: google_apis
           arch: x86_64
+          profile: pixel_5
+          ram-size: 4096M
+          emulator-boot-timeout: 1200
           force-avd-creation: false
           emulator-options: -no-snapshot-save -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim
           disable-animations: true
