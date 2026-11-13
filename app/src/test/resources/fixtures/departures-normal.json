@@ -1,0 +1,470 @@
+{
+  "rides": [
+    {
+      "id": "c4173998-ad88-484d-83f1-54c4c0b0a228",
+      "status": {
+        "segment": null,
+        "next_stop_sequence": null,
+        "has_arrived_at_next_stop": false,
+        "progress": null,
+        "deviation": {
+          "deviation_timestamp": "2026-11-13T16:24:36Z",
+          "deviation_seconds": 4476,
+          "reason": null,
+          "deviation_class": "LATE",
+          "deviation_type": "ESTIMATED",
+          "updated_at": "2026-11-13T16:03:28Z"
+        },
+        "scheduled_timestamp": "2026-11-13T15:10:00Z"
+      },
+      "platform": null,
+      "line": {
+        "code": "060",
+        "direction": "Bremen Fernbusterminal",
+        "name": "Bremen/Berlin - Vienna/Bratislava/Zagreb",
+        "trip_number": 59,
+        "means_of_transport": "BUS",
+        "brand": {
+          "id": "a18f138c-68fa-4b45-a42f-adb0378e10d3",
+          "name": "FlixBus"
+        }
+      },
+      "location": {
+        "coordinates": {
+          "latitude": 52.46289,
+          "longitude": 13.440758
+        },
+        "updated_at": "2026-11-13T16:04:14Z",
+        "speed_category": "MODERATE"
+      },
+      "omitted_calls": null,
+      "vehicle": {
+        "id": "a730642f-5f61-441b-87b0-132e27131b17",
+        "license_plate": null,
+        "type": "BUS"
+      },
+      "brand": null
+    },
+    {
+      "id": "0711a750-dac1-464c-939f-2376ebf0192b",
+      "status": {
+        "segment": null,
+        "next_stop_sequence": null,
+        "has_arrived_at_next_stop": false,
+        "progress": null,
+        "deviation": {
+          "deviation_timestamp": "2026-11-13T16:09:34Z",
+          "deviation_seconds": 1774,
+          "reason": null,
+          "deviation_class": "LATE",
+          "deviation_type": "ESTIMATED",
+          "updated_at": "2026-11-13T15:56:26Z"
+        },
+        "scheduled_timestamp": "2026-11-13T15:40:00Z"
+      },
+      "platform": null,
+      "line": {
+        "code": "1324",
+        "direction": "Warsaw, Bus Station West",
+        "name": "Warsaw - Berlin - Amsterdam",
+        "trip_number": 2,
+        "means_of_transport": "BUS",
+        "brand": {
+          "id": "a18f138c-68fa-4b45-a42f-adb0378e10d3",
+          "name": "FlixBus"
+        }
+      },
+      "location": {
+        "coordinates": {
+          "latitude": 52.500523,
+          "longitude": 13.272214
+        },
+        "updated_at": "2026-11-13T16:04:36Z",
+        "speed_category": "SLOW"
+      },
+      "omitted_calls": null,
+      "vehicle": {
+        "id": "b7a25544-b30d-4832-bbfb-be7a4f038633",
+        "license_plate": null,
+        "type": "BUS"
+      },
+      "brand": null
+    },
+    {
+      "id": "07cbfd99-8f42-4b7e-a75b-7b3af09be9c9",
+      "status": {
+        "segment": null,
+        "next_stop_sequence": null,
+        "has_arrived_at_next_stop": false,
+        "progress": null,
+        "deviation": {
+          "deviation_timestamp": "2026-11-13T17:02:04Z",
+          "deviation_seconds": 3724,
+          "reason": null,
+          "deviation_class": "LATE",
+          "deviation_type": "ESTIMATED",
+          "updated_at": "2026-11-13T15:55:27Z"
+        },
+        "scheduled_timestamp": "2026-11-13T16:00:00Z"
+      },
+      "platform": null,
+      "line": {
+        "code": "N160",
+        "direction": "Trieste (Autostazione)",
+        "name": "Copenhagen - Berlin - Trieste",
+        "trip_number": 4,
+        "means_of_transport": "BUS",
+        "brand": {
+          "id": "a18f138c-68fa-4b45-a42f-adb0378e10d3",
+          "name": "FlixBus"
+        }
+      },
+      "location": {
+        "coordinates": {
+          "latitude": 52.947735,
+          "longitude": 12.664625
+        },
+        "updated_at": "2026-11-13T16:04:34Z",
+        "speed_category": "FAST"
+      },
+      "omitted_calls": null,
+      "vehicle": {
+        "id": "ba74adef-208a-4a8f-9560-8a1260b24ac7",
+        "license_plate": null,
+        "type": "BUS"
+      },
+      "brand": null
+    },
+    {
+      "id": "1900901a-d422-4cec-a515-53613236e741",
+      "status": {
+        "segment": null,
+        "next_stop_sequence": null,
+        "has_arrived_at_next_stop": false,
+        "progress": null,
+        "deviation": {
+          "deviation_timestamp": "2026-11-13T16:33:48Z",
+          "deviation_seconds": 828,
+          "reason": null,
+          "deviation_class": "LATE",
+          "deviation_type": "ESTIMATED",
+          "updated_at": "2026-11-13T16:00:39Z"
+        },
+        "scheduled_timestamp": "2026-11-13T16:20:00Z"
+      },
+      "platform": null,
+      "line": {
+        "code": "N1338",
+        "direction": "Medyka, Border Crossing",
+        "name": "Medyka - Berlin - Luxembourg",
+        "trip_number": 2,
+        "means_of_transport": "BUS",
+        "brand": {
+          "id": "a18f138c-68fa-4b45-a42f-adb0378e10d3",
+          "name": "FlixBus"
+        }
+      },
+      "location": {
+        "coordinates": {
+          "latitude": 52.300686,
+          "longitude": 13.083531
+        },
+        "updated_at": "2026-11-13T16:05:17Z",
+        "speed_category": "FAST"
+      },
+      "omitted_calls": null,
+      "vehicle": {
+        "id": "11059816-6d63-41db-ba6e-b85f7e580760",
+        "license_plate": null,
+        "type": "BUS"
+      },
+      "brand": null
+    },
+    {
+      "id": "e24e90da-8e21-4e5b-b6ef-c97a091c0182",
+      "status": {
+        "segment": null,
+        "next_stop_sequence": null,
+        "has_arrived_at_next_stop": false,
+        "progress": null,
+        "deviation": {
+          "deviation_timestamp": "2026-11-13T16:20:00Z",
+          "deviation_seconds": 0,
+          "reason": null,
+          "deviation_class": "ON_TIME",
+          "deviation_type": "ESTIMATED",
+          "updated_at": "2026-11-13T15:42:02Z"
+        },
+        "scheduled_timestamp": "2026-11-13T16:20:00Z"
+      },
+      "platform": null,
+      "line": {
+        "code": "N1385",
+        "direction": "Rome Tiburtina Bus station",
+        "name": "Gdańsk - Munich - Rome",
+        "trip_number": 2,
+        "means_of_transport": "BUS",
+        "brand": {
+          "id": "a18f138c-68fa-4b45-a42f-adb0378e10d3",
+          "name": "FlixBus"
+        }
+      },
+      "location": {
+        "coordinates": {
+          "latitude": 52.512531,
+          "longitude": 13.28129
+        },
+        "updated_at": "2026-11-13T15:57:38Z",
+        "speed_category": "MODERATE"
+      },
+      "omitted_calls": null,
+      "vehicle": {
+        "id": "fe6a9f78-ff77-4b25-bc19-b5bb97049800",
+        "license_plate": null,
+        "type": "BUS"
+      },
+      "brand": null
+    },
+    {
+      "id": "0ef4f036-ccf3-4cb1-82d0-14ab91002322",
+      "status": {
+        "segment": null,
+        "next_stop_sequence": null,
+        "has_arrived_at_next_stop": false,
+        "progress": null,
+        "deviation": {
+          "deviation_timestamp": "2026-11-13T16:20:00Z",
+          "deviation_seconds": 0,
+          "reason": null,
+          "deviation_class": "ON_TIME",
+          "deviation_type": "ESTIMATED",
+          "updated_at": "2026-11-13T16:00:36Z"
+        },
+        "scheduled_timestamp": "2026-11-13T16:20:00Z"
+      },
+      "platform": null,
+      "line": {
+        "code": "144",
+        "direction": "Gorzów Wielkopolski, Main Station",
+        "name": "Gorzow Wielkopolski - Emden",
+        "trip_number": 2,
+        "means_of_transport": "BUS",
+        "brand": {
+          "id": "a18f138c-68fa-4b45-a42f-adb0378e10d3",
+          "name": "FlixBus"
+        }
+      },
+      "location": {
+        "coordinates": {
+          "latitude": 52.419376,
+          "longitude": 13.196447
+        },
+        "updated_at": "2026-11-13T16:05:18Z",
+        "speed_category": "SLOW"
+      },
+      "omitted_calls": null,
+      "vehicle": {
+        "id": "68f64779-3387-4c37-98e2-93768ff59e50",
+        "license_plate": null,
+        "type": "BUS"
+      },
+      "brand": null
+    },
+    {
+      "id": "73a93072-3a55-40f4-a56f-81c1a2d517d2",
+      "status": {
+        "segment": null,
+        "next_stop_sequence": null,
+        "has_arrived_at_next_stop": null,
+        "progress": null,
+        "deviation": null,
+        "scheduled_timestamp": "2026-11-13T16:30:00Z"
+      },
+      "platform": null,
+      "line": {
+        "code": "050",
+        "direction": "Hamburg central bus station",
+        "name": "Hamburg - Berlin",
+        "trip_number": 3,
+        "means_of_transport": "BUS",
+        "brand": {
+          "id": "a18f138c-68fa-4b45-a42f-adb0378e10d3",
+          "name": "FlixBus"
+        }
+      },
+      "location": {
+        "coordinates": {
+          "latitude": 52.507416,
+          "longitude": 13.280632
+        },
+        "updated_at": "2026-11-13T15:52:48Z",
+        "speed_category": "STATIONARY"
+      },
+      "omitted_calls": null,
+      "vehicle": {
+        "id": "2e73c691-73e2-4961-8557-f8cebe45ed00",
+        "license_plate": null,
+        "type": "BUS"
+      },
+      "brand": null
+    },
+    {
+      "id": "1b5956d7-3dc1-44be-9cc3-4b15e442dc51",
+      "status": {
+        "segment": null,
+        "next_stop_sequence": null,
+        "has_arrived_at_next_stop": null,
+        "progress": null,
+        "deviation": null,
+        "scheduled_timestamp": "2026-11-13T17:00:00Z"
+      },
+      "platform": null,
+      "line": {
+        "code": "1327",
+        "direction": "Lodz, Bus Station",
+        "name": "Lodz - Poznan - Berlin",
+        "trip_number": 8,
+        "means_of_transport": "BUS",
+        "brand": {
+          "id": "a18f138c-68fa-4b45-a42f-adb0378e10d3",
+          "name": "FlixBus"
+        }
+      },
+      "location": null,
+      "omitted_calls": null,
+      "vehicle": null,
+      "brand": null
+    },
+    {
+      "id": "22284bb0-3fd3-49d0-b0cf-b0b651d6f553",
+      "status": {
+        "segment": null,
+        "next_stop_sequence": null,
+        "has_arrived_at_next_stop": false,
+        "progress": null,
+        "deviation": {
+          "deviation_timestamp": "2026-11-13T18:00:00Z",
+          "deviation_seconds": 0,
+          "reason": null,
+          "deviation_class": "ON_TIME",
+          "deviation_type": "ESTIMATED",
+          "updated_at": "2026-11-13T16:04:30Z"
+        },
+        "scheduled_timestamp": "2026-11-13T18:00:00Z"
+      },
+      "platform": null,
+      "line": {
+        "code": "N1326",
+        "direction": "Lyon (Gerland Bus Station)",
+        "name": "Warsaw - Berlin - Lyon",
+        "trip_number": 1,
+        "means_of_transport": "BUS",
+        "brand": {
+          "id": "a18f138c-68fa-4b45-a42f-adb0378e10d3",
+          "name": "FlixBus"
+        }
+      },
+      "location": {
+        "coordinates": {
+          "latitude": 52.321766,
+          "longitude": 14.607317
+        },
+        "updated_at": "2026-11-13T16:04:36Z",
+        "speed_category": "STATIONARY"
+      },
+      "omitted_calls": null,
+      "vehicle": {
+        "id": "da6d38d2-0c60-49a9-8cd9-c2490ded3bbd",
+        "license_plate": null,
+        "type": "BUS"
+      },
+      "brand": null
+    },
+    {
+      "id": "48552a01-6237-45c7-8ac8-9a8be0891545",
+      "status": {
+        "segment": null,
+        "next_stop_sequence": null,
+        "has_arrived_at_next_stop": null,
+        "progress": null,
+        "deviation": null,
+        "scheduled_timestamp": "2026-11-13T18:00:00Z"
+      },
+      "platform": null,
+      "line": {
+        "code": "N260",
+        "direction": "Budapest Népliget bus station",
+        "name": "Berlin - Prague - Budapest",
+        "trip_number": 2,
+        "means_of_transport": "BUS",
+        "brand": {
+          "id": "a18f138c-68fa-4b45-a42f-adb0378e10d3",
+          "name": "FlixBus"
+        }
+      },
+      "location": null,
+      "omitted_calls": null,
+      "vehicle": {
+        "id": "46b192ae-9419-45f6-9e22-b230020d8dfe",
+        "license_plate": null,
+        "type": "BUS"
+      },
+      "brand": null
+    },
+    {
+      "id": "3d6364c3-604d-4343-80b5-ad1d1f3dbd44",
+      "status": {
+        "segment": null,
+        "next_stop_sequence": null,
+        "has_arrived_at_next_stop": false,
+        "progress": null,
+        "deviation": {
+          "deviation_timestamp": "2026-11-13T18:48:15Z",
+          "deviation_seconds": 2595,
+          "reason": null,
+          "deviation_class": "LATE",
+          "deviation_type": "ESTIMATED",
+          "updated_at": "2026-11-13T13:35:16Z"
+        },
+        "scheduled_timestamp": "2026-11-13T18:05:00Z"
+      },
+      "platform": null,
+      "line": {
+        "code": "1926",
+        "direction": "Hamburg central bus station",
+        "name": "Bucharest - Berlin",
+        "trip_number": 1,
+        "means_of_transport": "BUS",
+        "brand": {
+          "id": "a18f138c-68fa-4b45-a42f-adb0378e10d3",
+          "name": "FlixBus"
+        }
+      },
+      "location": {
+        "coordinates": {
+          "latitude": 50.263844,
+          "longitude": 14.367242
+        },
+        "updated_at": "2026-11-13T15:12:26Z",
+        "speed_category": "FAST"
+      },
+      "omitted_calls": null,
+      "vehicle": {
+        "id": "852b7f78-185c-46a8-9d9c-3a0fd9d6378e",
+        "license_plate": null,
+        "type": "BUS"
+      },
+      "brand": null
+    }
+  ],
+  "station": {
+    "id": "dcbaaee6-9603-11e6-9066-549f350fcb0c",
+    "name": "Berlin central bus station",
+    "timezone": "Europe/Berlin",
+    "description": "Gate information available here: https://zob.berlin/en",
+    "coordinates": {
+      "latitude": 52.507171,
+      "longitude": 13.279399
+    }
+  }
+}
