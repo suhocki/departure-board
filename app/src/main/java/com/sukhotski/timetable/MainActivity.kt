@@ -4,22 +4,26 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Scaffold
-import androidx.compose.ui.Modifier
+import androidx.activity.viewModels
+import androidx.compose.runtime.getValue
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.sukhotski.timetable.ui.theme.TimetableTheme
+import com.sukhotski.timetable.ui.timetable.TimetableScreen
+import com.sukhotski.timetable.ui.timetable.TimetableViewModel
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
+
+    private val viewModel: TimetableViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
             TimetableTheme {
-                Scaffold { padding -> Box(Modifier.padding(padding)) }
+                val state by viewModel.state.collectAsStateWithLifecycle()
+                TimetableScreen(state = state)
             }
         }
     }

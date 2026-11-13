@@ -50,6 +50,8 @@ object PreviewData {
         ),
     )
 
+    val content = TimetableUiState.Loaded(timetable, updatedAt)
+
     private fun at(utcTime: String): Instant = Instant.parse("2026-11-13T${utcTime}Z")
 
     private fun departure(
