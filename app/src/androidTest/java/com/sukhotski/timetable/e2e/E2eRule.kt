@@ -35,6 +35,7 @@ class E2eRule(testInstance: Any, startTime: Instant = Instant.parse("2026-11-14T
     TestRule {
     private val hilt = HiltAndroidRule(testInstance)
     val compose: ComposeTestRule = createEmptyComposeRule()
+    private var injected = false
     val server: MockWebServer get() = TestEnvironment.server
     val clock: TestClock get() = TestEnvironment.clock
 
@@ -64,7 +65,8 @@ class E2eRule(testInstance: Any, startTime: Instant = Instant.parse("2026-11-14T
     }
 
     fun launch(): ActivityScenario<MainActivity> {
-        hilt.inject()
+        if (!injected) hilt.inject()
+        injected = true
         return ActivityScenario.launch(MainActivity::class.java)
     }
 

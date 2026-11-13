@@ -1,10 +1,14 @@
 package com.sukhotski.timetable.e2e
 
 import androidx.compose.ui.test.ExperimentalTestApi
+import androidx.compose.ui.test.hasContentDescription
 import androidx.compose.ui.test.hasScrollAction
 import androidx.compose.ui.test.hasText
+import androidx.compose.ui.test.onAllNodesWithText
+import androidx.compose.ui.test.onFirst
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
+import androidx.compose.ui.test.performScrollToNode
 import androidx.compose.ui.test.performTouchInput
 import androidx.compose.ui.test.swipeDown
 import androidx.lifecycle.Lifecycle
@@ -100,5 +104,48 @@ class TimetableE2eTest {
 
         waitForText("Kyiv (Central Bus Station)")
         assertEquals(2, e2e.server.requestCount)
+    }
+
+    @Test
+    fun relaunchAfterProcessDeathLoadsAgain() {
+        e2e.enqueueFixture("departures-normal.json")
+        val first = e2e.launch()
+        waitForText("Berlin central bus station")
+
+        // A killed process loses the ViewModel. Closing the Activity gives the same empty start.
+        first.close()
+        e2e.enqueueFixture("departures-cancelled.json")
+        e2e.launch()
+
+        waitForText("Kyiv (Central Bus Station)")
+        assertEquals(2, e2e.server.requestCount)
+    }
+
+    @Test
+    fun delayedRowsShowMinutesOrExpectedTime() {
+        e2e.enqueueFixture("departures-normal.json")
+        e2e.launch()
+        waitForText("Berlin central bus station")
+
+        // 74 min late is above the 30 min limit, 29 and 13 are not.
+        e2e.compose.onNodeWithText("+29 min", useUnmergedTree = true).assertExists()
+        e2e.compose.onNodeWithText("+13 min", useUnmergedTree = true).assertExists()
+        e2e.compose.onAllNodesWithText("Expected ", substring = true, useUnmergedTree = true)
+            .onFirst().assertExists()
+        e2e.compose.onNodeWithText("+74 min", useUnmergedTree = true).assertDoesNotExist()
+    }
+
+    @Test
+    fun cancelledRideShowsTheWordCancelled() {
+        e2e.enqueueFixture("departures-cancelled.json")
+        e2e.launch()
+        waitForText("Berlin central bus station")
+
+        // The cancelled ride is the seventh row, below the first screenful on a small device.
+        e2e.compose.onNode(hasScrollAction())
+            .performScrollToNode(hasContentDescription("cancelled", substring = true))
+
+        e2e.compose.onNodeWithText("Cancelled", useUnmergedTree = true).assertExists()
+        e2e.compose.onNode(hasContentDescription("Line N3212", substring = true)).assertExists()
     }
 }
