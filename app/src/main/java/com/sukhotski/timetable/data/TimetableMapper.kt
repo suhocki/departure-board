@@ -13,17 +13,22 @@ import java.time.DateTimeException
 import java.time.Instant
 import java.time.OffsetDateTime
 import java.time.ZoneId
+import java.time.ZoneOffset
 import java.time.format.DateTimeParseException
 
 private const val CANCELLED = "CANCELLED"
 
-/** Returns null without a station name or time zone. Rides are not filtered by the request window. */
+/** Returns null when the response has no station name. Rides are not filtered by the request window. */
 internal fun TimetableResponse.toTimetable(): Timetable? {
     val stationDto = station ?: return null
     val name = stationDto.name?.takeIf { it.isNotBlank() } ?: return null
-    val zone = parseZoneOrNull(stationDto.timezone) ?: return null
+    val zone = parseZoneOrNull(stationDto.timezone)
     return Timetable(
-        station = Station(name = name, zone = zone, zoneIsFallback = false),
+        station = Station(
+            name = name,
+            zone = zone ?: ZoneOffset.UTC,
+            zoneIsFallback = zone == null,
+        ),
         departures = rides
             .mapNotNull { it.toDepartureOrNull() }
             .distinctBy { it.id }
@@ -72,9 +77,9 @@ private fun parseInstantOrNull(raw: String?): Instant? {
 }
 
 private fun parseZoneOrNull(raw: String?): ZoneId? {
-    if (raw == null) return null
+    if (raw.isNullOrBlank()) return null
     return try {
-        ZoneId.of(raw)
+        ZoneId.of(raw.trim())
     } catch (_: DateTimeException) {
         null
     }

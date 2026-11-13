@@ -9,7 +9,9 @@ import com.sukhotski.timetable.testing.fixture
 import com.sukhotski.timetable.testing.ridesJson
 import java.time.Instant
 import java.time.ZoneId
+import java.time.ZoneOffset
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
 import org.junit.Test
@@ -155,6 +157,27 @@ class TimetableMapperTest {
             DepartureStatus.Cancelled,
             statusOf(deviation("CANCELLED", "2026-11-13T16:40:00Z")),
         )
+    }
+
+    @Test
+    fun `falls back to UTC when station time zone is missing or invalid`() {
+        for (timezone in listOf("null", "\"\"", "\"Europe/Berln\"", "\"PST\"")) {
+            val timetable =
+                map(
+                    """{"rides":[$GOOD_RIDE],"station":{"name":"Berlin central bus station","timezone":$timezone}}""",
+                )
+
+            assertEquals(timezone, ZoneOffset.UTC, timetable.station.zone)
+            assertTrue(timezone, timetable.station.zoneIsFallback)
+            assertEquals(timezone, 1, timetable.departures.size)
+        }
+        val padded =
+            map(
+                """{"rides":[],"station":{"name":"Berlin central bus station","timezone":" Europe/Berlin "}}""",
+            )
+
+        assertEquals(ZoneId.of("Europe/Berlin"), padded.station.zone)
+        assertFalse(padded.station.zoneIsFallback)
     }
 
     private fun mapOrNull(json: String): Timetable? =
