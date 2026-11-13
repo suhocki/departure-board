@@ -94,7 +94,7 @@ private fun LoadedContent(
     val station = state.timetable.station
     val hours = state.window.toHours().toInt()
     Column(modifier) {
-        StationHeader(station, state.updatedAt, hours)
+        StationHeader(station, state.updatedAt, hours, formatter)
         state.refreshError?.let {
             RefreshErrorBanner(it, dataTime = formatter.time(state.updatedAt, station.zone))
         }
@@ -138,14 +138,22 @@ private val TimetableItem.key: String
     }
 
 @Composable
-private fun StationHeader(station: Station, updatedAt: Instant, hours: Int) {
+private fun StationHeader(
+    station: Station,
+    updatedAt: Instant,
+    hours: Int,
+    formatter: TimeFormatter,
+) {
+    // The window start is also the data time, so the user sees how old the list is.
+    val from = formatter.time(updatedAt, station.zone)
     val caption = if (station.zoneIsFallback) {
-        pluralStringResource(R.plurals.header_caption_zone_unknown, hours, hours)
+        pluralStringResource(R.plurals.header_caption_zone_unknown, hours, hours, from)
     } else {
         pluralStringResource(
             R.plurals.header_caption,
             hours,
             hours,
+            from,
             formatUtcOffset(station.zone.rules.getOffset(updatedAt)),
         )
     }

@@ -45,14 +45,14 @@ class TimetableScreenTest {
     }
 
     @Test
-    fun `content shows station name and station time caption`() {
+    fun `content shows station name and caption with window start`() {
         setScreen(PreviewData.content)
 
         composeRule.onNode(
             hasText("Berlin central bus station") and isHeading(),
         ).assertIsDisplayed()
         composeRule.onNodeWithText(
-            context.resources.getQuantityString(R.plurals.header_caption, 2, 2, "UTC+1"),
+            context.resources.getQuantityString(R.plurals.header_caption, 2, 2, "23:05", "UTC+1"),
         ).assertIsDisplayed()
     }
 
@@ -61,7 +61,12 @@ class TimetableScreenTest {
         setScreen(PreviewData.contentZoneUnknown)
 
         composeRule.onNodeWithText(
-            context.resources.getQuantityString(R.plurals.header_caption_zone_unknown, 2, 2),
+            context.resources.getQuantityString(
+                R.plurals.header_caption_zone_unknown,
+                2,
+                2,
+                "22:05",
+            ),
         ).assertIsDisplayed()
         composeRule.onNodeWithText("22:30").assertIsDisplayed()
     }

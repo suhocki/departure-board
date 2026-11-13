@@ -23,7 +23,7 @@ Times are shown in the station's time zone, whatever zone the phone is in.
 ## What it does
 
 - Loads departures for `now` to `now + 2h` on start. Each row: direction, line code, scheduled time.
-- Shows the station name and `Next 2 hours · Station time (UTC+1)` above the list.
+- Shows the station name and `Next 2 hours from 23:05 · Station time (UTC+1)` above the list. The start time is also the data time.
 - Marks delays (`+13 min`, or `Expected 23:24` above 30 minutes) and cancelled rides.
 - Loading, empty and error states. Pull to refresh and a Refresh button. A failed refresh keeps the list and shows a banner.
 - On return to the app: reloads when the data is older than one minute, retries after an error.

@@ -3,12 +3,12 @@
     <string name="app_name">Departures</string>
     <string name="timetable_title">Departures</string>
     <plurals name="header_caption">
-        <item quantity="one">Next %1$d hour · Station time (%2$s)</item>
-        <item quantity="other">Next %1$d hours · Station time (%2$s)</item>
+        <item quantity="one">Next %1$d hour from %2$s · Station time (%3$s)</item>
+        <item quantity="other">Next %1$d hours from %2$s · Station time (%3$s)</item>
     </plurals>
     <plurals name="header_caption_zone_unknown">
-        <item quantity="one">Next %1$d hour · Times in UTC (station time zone unknown)</item>
-        <item quantity="other">Next %1$d hours · Times in UTC (station time zone unknown)</item>
+        <item quantity="one">Next %1$d hour from %2$s · Times in UTC (station time zone unknown)</item>
+        <item quantity="other">Next %1$d hours from %2$s · Times in UTC (station time zone unknown)</item>
     </plurals>
     <string name="action_refresh">Refresh</string>
     <string name="action_retry">Retry</string>
