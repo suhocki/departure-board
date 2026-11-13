@@ -39,7 +39,7 @@ Times are shown in the station's time zone, whatever zone the phone is in.
 | Decision | Why | Not taken |
 |---|---|---|
 | One module, `ui -> domain <- data`, no use cases | One screen. A use case would only forward the call | Multi-module, clean architecture layers |
-| Own `LoadResult` with two errors: `NoConnection`, `Unexpected` | The user has two actions: check the connection or retry. `kotlin.Result` loses the error type | One error per HTTP code |
+| Own `LoadResult` with two errors: `NoConnection` (any `IOException`, also timeouts and TLS errors), `Unexpected` (everything else) | The user has two actions: check the connection or retry. `kotlin.Result` loses the error type | One error per HTTP code |
 | Error bodies are never read | The API sends plain text, JSON or an empty body | Parsing error JSON |
 | Lenient parsing: a broken ride is dropped, the rest is shown | Only four fields are needed. One bad ride must not empty the screen | Failing the whole response |
 | Delay is decided by the timestamp, not `deviation_class` | The timestamp is a fact, an unknown class cannot break it | Trusting the class |
@@ -71,11 +71,12 @@ Times are shown in the station's time zone, whatever zone the phone is in.
 | Empty response | "No departures", pull to refresh still works | `TimetableScreenTest.empty shows message` |
 | 200% font size | Nothing is cut, the status wraps | screenshot `content_font_2x` |
 
-Dropped rides are silent now. In production they would be reported to crash reporting as non-fatals.
+Dropped rides and load errors are silent now: there is no logging on purpose, the URL contains the key.
+In production both would go to crash reporting as non-fatals, from `TimetableMapper` and the catch blocks in `DefaultTimetableRepository`.
 
 ## Tests
 
-80 JVM tests and 5 screenshot goldens, no emulator needed:
+87 JVM tests, 5 of them screenshot tests, no emulator needed:
 
 - Pure unit tests: domain, JSON models, mapper, time formatting, date headers.
 - Repository on real OkHttp, Retrofit and MockWebServer, with saved real API responses in `app/src/test/resources/fixtures`.
@@ -96,8 +97,7 @@ These were checked by hand on an emulator. Instrumented tests are the next step;
 - Modules and KMP: one screen. A split would be `:core:domain`, `:data:timetable`, `:feature:timetable`.
   For KMP, Retrofit would move to Ktor and `java.time` to `kotlinx-datetime`.
 - Translations: all text is in `strings.xml`, minutes and hours use plurals.
-
-compileSdk is 36. Moving to 37 also needs a newer AGP and lets OkHttp go past 5.4.
+- compileSdk 37: it needs a newer AGP. OkHttp stays on 5.4 until then, 5.5 needs compileSdk 37.
 
 ## Next steps
 
@@ -110,3 +110,6 @@ compileSdk is 36. Moving to 37 also needs a newer AGP and lets OkHttp go past 5.
 ## AI use
 
 I used AI while building this, under my supervision at both the high level and the low level.
+
+The design and a commit-by-commit plan came first. The app was then built from that plan in one
+evening, one tested commit at a time. The commits after "Add README" are fixes from a code review.
