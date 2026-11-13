@@ -13,6 +13,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.LiveRegionMode
 import androidx.compose.ui.semantics.contentDescription
@@ -63,5 +64,23 @@ fun ErrorContent(error: LoadError, onRetry: () -> Unit, modifier: Modifier = Mod
         Button(onClick = onRetry) {
             Text(stringResource(R.string.action_retry))
         }
+    }
+}
+
+@Composable
+fun EmptyContent(hours: Int, modifier: Modifier = Modifier) {
+    Column(
+        modifier = modifier.padding(24.dp),
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally,
+    ) {
+        Text(stringResource(R.string.empty_title), style = MaterialTheme.typography.titleLarge)
+        Spacer(Modifier.height(8.dp))
+        Text(
+            text = pluralStringResource(R.plurals.empty_body, hours, hours),
+            style = MaterialTheme.typography.bodyMedium,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            textAlign = TextAlign.Center,
+        )
     }
 }

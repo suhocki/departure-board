@@ -13,6 +13,11 @@
     <string name="action_refresh">Refresh</string>
     <string name="action_retry">Retry</string>
     <string name="loading_description">Loading departures</string>
+    <string name="empty_title">No departures</string>
+    <plurals name="empty_body">
+        <item quantity="one">No buses leave this station in the next %1$d hour. Pull down to refresh.</item>
+        <item quantity="other">No buses leave this station in the next %1$d hours. Pull down to refresh.</item>
+    </plurals>
     <string name="error_no_connection_title">No connection</string>
     <string name="error_no_connection_body">Check your internet connection and try again.</string>
     <string name="error_unexpected_title">Something went wrong</string>

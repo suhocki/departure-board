@@ -111,6 +111,17 @@ class TimetableScreenTest {
         assertEquals(1, refreshes)
     }
 
+    @Test
+    fun `empty shows message`() {
+        setScreen(PreviewData.empty)
+
+        composeRule.onNodeWithText(context.getString(R.string.empty_title)).assertIsDisplayed()
+        composeRule.onNodeWithText(
+            context.resources.getQuantityString(R.plurals.empty_body, 2, 2),
+        ).assertIsDisplayed()
+        composeRule.onNodeWithText("Berlin central bus station").assertIsDisplayed()
+    }
+
     private fun setScreen(state: TimetableUiState, onRefresh: () -> Unit = {}) {
         composeRule.setContent {
             TimetableTheme {

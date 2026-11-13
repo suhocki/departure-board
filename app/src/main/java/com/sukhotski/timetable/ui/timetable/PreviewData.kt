@@ -64,6 +64,8 @@ object PreviewData {
 
     val errorUnexpected = TimetableUiState.Error(LoadError.Unexpected)
 
+    val empty = TimetableUiState.Loaded(Timetable(station, emptyList()), updatedAt)
+
     private fun at(utcTime: String): Instant = Instant.parse("2026-11-13T${utcTime}Z")
 
     private fun departure(

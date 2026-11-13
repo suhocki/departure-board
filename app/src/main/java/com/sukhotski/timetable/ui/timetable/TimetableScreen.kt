@@ -95,6 +95,9 @@ private fun LoadedContent(
             modifier = Modifier.weight(1f),
         ) {
             LazyColumn(state = listState, modifier = Modifier.fillMaxSize()) {
+                if (state.timetable.departures.isEmpty()) {
+                    item { EmptyContent(hours, Modifier.fillParentMaxSize()) }
+                }
                 itemsIndexed(
                     items = state.timetable.departures,
                     key = { _, departure -> departure.id },
