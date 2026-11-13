@@ -2,4 +2,12 @@
 <resources>
     <string name="app_name">Departures</string>
     <string name="timetable_title">Departures</string>
+    <plurals name="header_caption">
+        <item quantity="one">Next %1$d hour · Station time (%2$s)</item>
+        <item quantity="other">Next %1$d hours · Station time (%2$s)</item>
+    </plurals>
+    <plurals name="header_caption_zone_unknown">
+        <item quantity="one">Next %1$d hour · Times in UTC (station time zone unknown)</item>
+        <item quantity="other">Next %1$d hours · Times in UTC (station time zone unknown)</item>
+    </plurals>
 </resources>

@@ -1,7 +1,9 @@
 package com.sukhotski.timetable.ui.timetable
 
 import android.text.format.DateFormat
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
@@ -9,6 +11,7 @@ import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
@@ -17,10 +20,16 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.heading
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import com.sukhotski.timetable.R
+import com.sukhotski.timetable.domain.Station
 import com.sukhotski.timetable.ui.theme.TimetableTheme
+import java.time.Instant
 import java.util.Locale
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -61,14 +70,48 @@ private fun LoadedContent(
     modifier: Modifier = Modifier,
 ) {
     val station = state.timetable.station
-    LazyColumn(state = listState, modifier = modifier) {
-        itemsIndexed(
-            items = state.timetable.departures,
-            key = { _, departure -> departure.id },
-        ) { index, departure ->
-            if (index > 0) HorizontalDivider()
-            DepartureRow(departure, station.zone, formatter)
+    val hours = TimetableViewModel.WINDOW.toHours().toInt()
+    Column(modifier) {
+        StationHeader(station, state.updatedAt, hours)
+        LazyColumn(state = listState, modifier = Modifier.weight(1f)) {
+            itemsIndexed(
+                items = state.timetable.departures,
+                key = { _, departure -> departure.id },
+            ) { index, departure ->
+                if (index > 0) HorizontalDivider()
+                DepartureRow(departure, station.zone, formatter)
+            }
         }
+    }
+}
+
+@Composable
+private fun StationHeader(station: Station, updatedAt: Instant, hours: Int) {
+    val caption = if (station.zoneIsFallback) {
+        pluralStringResource(R.plurals.header_caption_zone_unknown, hours, hours)
+    } else {
+        pluralStringResource(
+            R.plurals.header_caption,
+            hours,
+            hours,
+            formatUtcOffset(station.zone.rules.getOffset(updatedAt)),
+        )
+    }
+    Column(
+        Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 16.dp, vertical = 12.dp),
+    ) {
+        Text(
+            text = station.name,
+            style = MaterialTheme.typography.titleLarge,
+            modifier = Modifier.semantics { heading() },
+        )
+        Text(
+            caption,
+            style = MaterialTheme.typography.bodyMedium,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+        )
     }
 }
 

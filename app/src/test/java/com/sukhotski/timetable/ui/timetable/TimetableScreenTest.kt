@@ -2,6 +2,8 @@ package com.sukhotski.timetable.ui.timetable
 
 import android.content.Context
 import androidx.compose.ui.test.assertIsDisplayed
+import androidx.compose.ui.test.hasText
+import androidx.compose.ui.test.isHeading
 import androidx.compose.ui.test.junit4.v2.createComposeRule
 import androidx.compose.ui.test.onNodeWithText
 import androidx.test.core.app.ApplicationProvider
@@ -32,6 +34,28 @@ class TimetableScreenTest {
         PreviewData.timetable.departures.forEach {
             composeRule.onNodeWithText(it.lineCode).assertExists()
         }
+    }
+
+    @Test
+    fun `content shows station name and station time caption`() {
+        setScreen(PreviewData.content)
+
+        composeRule.onNode(
+            hasText("Berlin central bus station") and isHeading(),
+        ).assertIsDisplayed()
+        composeRule.onNodeWithText(
+            context.resources.getQuantityString(R.plurals.header_caption, 2, 2, "UTC+1"),
+        ).assertIsDisplayed()
+    }
+
+    @Test
+    fun `unknown station zone shows the UTC caption`() {
+        setScreen(PreviewData.contentZoneUnknown)
+
+        composeRule.onNodeWithText(
+            context.resources.getQuantityString(R.plurals.header_caption_zone_unknown, 2, 2),
+        ).assertIsDisplayed()
+        composeRule.onNodeWithText("22:30").assertIsDisplayed()
     }
 
     private fun setScreen(state: TimetableUiState) {

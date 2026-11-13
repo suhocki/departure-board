@@ -6,6 +6,7 @@ import com.sukhotski.timetable.domain.Station
 import com.sukhotski.timetable.domain.Timetable
 import java.time.Instant
 import java.time.ZoneId
+import java.time.ZoneOffset
 
 /** One data set for previews, UI tests and screenshots. Friday 2026-11-13, 23:05 in Berlin. */
 object PreviewData {
@@ -51,6 +52,12 @@ object PreviewData {
     )
 
     val content = TimetableUiState.Loaded(timetable, updatedAt)
+
+    val contentZoneUnknown = content.copy(
+        timetable = timetable.copy(
+            station = station.copy(zone = ZoneOffset.UTC, zoneIsFallback = true),
+        ),
+    )
 
     private fun at(utcTime: String): Instant = Instant.parse("2026-11-13T${utcTime}Z")
 
