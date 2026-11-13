@@ -150,6 +150,49 @@ class TimetableScreenTest {
         ).assertIsDisplayed()
     }
 
+    @Test
+    fun `delayed and cancelled rows show status and are described for TalkBack`() {
+        setScreen(PreviewData.content)
+
+        composeRule.onNodeWithText(
+            context.getString(R.string.departure_delay, 13),
+        ).assertIsDisplayed()
+        composeRule.onNodeWithText(
+            context.getString(R.string.departure_expected, "23:24"),
+        ).assertIsDisplayed()
+        composeRule.onNodeWithText(
+            context.getString(R.string.departure_cancelled),
+        ).assertIsDisplayed()
+        composeRule.onNodeWithContentDescription(
+            context.getString(
+                R.string.departure_a11y_delayed,
+                "060",
+                "Bremen Fernbusterminal",
+                "22:10",
+                context.resources.getQuantityString(R.plurals.delay_minutes_late, 74, 74),
+                "23:24",
+            ),
+        ).assertExists()
+        composeRule.onNodeWithContentDescription(
+            context.getString(
+                R.string.departure_a11y_delayed,
+                "N1338",
+                "Medyka, Border Crossing",
+                "23:20",
+                context.resources.getQuantityString(R.plurals.delay_minutes_late, 13, 13),
+                "23:33",
+            ),
+        ).assertExists()
+        composeRule.onNodeWithContentDescription(
+            context.getString(
+                R.string.departure_a11y_cancelled,
+                "N3212",
+                "Bremen Fernbusterminal",
+                "23:40",
+            ),
+        ).assertExists()
+    }
+
     private fun setScreen(state: TimetableUiState, onRefresh: () -> Unit = {}) {
         composeRule.setContent {
             TimetableTheme {

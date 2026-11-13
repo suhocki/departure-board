@@ -16,6 +16,13 @@
     <string name="departure_delay">+%1$d min</string>
     <string name="departure_expected">Expected %1$s</string>
     <string name="departure_cancelled">Cancelled</string>
+    <plurals name="delay_minutes_late">
+        <item quantity="one">%d minute late</item>
+        <item quantity="other">%d minutes late</item>
+    </plurals>
+    <string name="departure_a11y">Line %1$s to %2$s, departs %3$s</string>
+    <string name="departure_a11y_delayed">Line %1$s to %2$s, scheduled %3$s, %4$s, now expected %5$s</string>
+    <string name="departure_a11y_cancelled">Line %1$s to %2$s, cancelled, was scheduled %3$s</string>
     <string name="empty_title">No departures</string>
     <plurals name="empty_body">
         <item quantity="one">No buses leave this station in the next %1$d hour. Pull down to refresh.</item>

@@ -10,7 +10,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.tooling.preview.Preview
@@ -35,7 +38,9 @@ fun DepartureRow(
     formatter: TimeFormatter,
     modifier: Modifier = Modifier,
 ) {
+    val scheduledTime = formatter.time(departure.scheduled, zone)
     val isCancelled = departure.status is DepartureStatus.Cancelled
+    val description = departureDescription(departure, scheduledTime, zone, formatter)
     // The word "Cancelled" carries the meaning. Color and strike-through only support it.
     val textColor = if (isCancelled) {
         MaterialTheme.colorScheme.onSurfaceVariant
@@ -48,7 +53,7 @@ fun DepartureRow(
         trailingContent = {
             Column(horizontalAlignment = Alignment.End) {
                 Text(
-                    text = formatter.time(departure.scheduled, zone),
+                    text = scheduledTime,
                     style = MaterialTheme.typography.titleMedium,
                     textDecoration = if (isCancelled) TextDecoration.LineThrough else null,
                 )
@@ -65,7 +70,8 @@ fun DepartureRow(
             }
         },
         colors = ListItemDefaults.colors(containerColor = Color.Transparent),
-        modifier = modifier,
+        // One node for screen readers, with a full sentence instead of three fragments.
+        modifier = modifier.semantics(mergeDescendants = true) { contentDescription = description },
     )
 }
 
@@ -85,6 +91,42 @@ private fun statusText(departure: Departure, zone: ZoneId, formatter: TimeFormat
             }
         }
     }
+
+@Composable
+private fun departureDescription(
+    departure: Departure,
+    scheduledTime: String,
+    zone: ZoneId,
+    formatter: TimeFormatter,
+): String = when (val status = departure.status) {
+    DepartureStatus.Scheduled ->
+        stringResource(
+            R.string.departure_a11y,
+            departure.lineCode,
+            departure.direction,
+            scheduledTime,
+        )
+
+    DepartureStatus.Cancelled ->
+        stringResource(
+            R.string.departure_a11y_cancelled,
+            departure.lineCode,
+            departure.direction,
+            scheduledTime,
+        )
+
+    is DepartureStatus.Delayed -> {
+        val minutes = delayMinutes(departure.scheduled, status.expected).toInt()
+        stringResource(
+            R.string.departure_a11y_delayed,
+            departure.lineCode,
+            departure.direction,
+            scheduledTime,
+            pluralStringResource(R.plurals.delay_minutes_late, minutes, minutes),
+            formatter.time(status.expected, zone),
+        )
+    }
+}
 
 @Preview
 @Composable

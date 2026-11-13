@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.ui.semantics.SemanticsActions
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.v2.createComposeRule
+import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.text.TextLayoutResult
 import androidx.compose.ui.text.style.TextDecoration
@@ -121,6 +122,42 @@ class DepartureRowTest {
         val layouts = mutableListOf<TextLayoutResult>()
         time.config[SemanticsActions.GetTextLayoutResult].action?.invoke(layouts)
         assertEquals(TextDecoration.LineThrough, layouts.single().layoutInput.style.textDecoration)
+    }
+
+    @Test
+    fun `describes scheduled delayed and cancelled rides for TalkBack`() {
+        val delayedRide = PreviewData.timetable.departures[2]
+        val cancelledRide = PreviewData.timetable.departures[5]
+        setRows(airportRide, delayedRide, cancelledRide)
+
+        composeRule.onNodeWithContentDescription(
+            context.getString(R.string.departure_a11y, "N3207", airportRide.direction, "23:30"),
+        ).assertExists()
+        composeRule.onNodeWithContentDescription(
+            context.getString(
+                R.string.departure_a11y_delayed,
+                "N1338",
+                "Medyka, Border Crossing",
+                "23:20",
+                context.resources.getQuantityString(R.plurals.delay_minutes_late, 13, 13),
+                "23:33",
+            ),
+        ).assertExists()
+        composeRule.onNodeWithContentDescription(
+            context.getString(
+                R.string.departure_a11y_cancelled,
+                "N3212",
+                "Bremen Fernbusterminal",
+                "23:40",
+            ),
+        ).assertExists()
+    }
+
+    @Test
+    fun `says one minute late in singular`() {
+        setRows(delayed(id = "a", minutes = 1))
+
+        composeRule.onNodeWithContentDescription("1 minute late", substring = true).assertExists()
     }
 
     private fun setRows(vararg departures: Departure, formatter: TimeFormatter = this.formatter) {
