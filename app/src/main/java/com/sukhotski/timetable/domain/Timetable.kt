@@ -1,0 +1,26 @@
+package com.sukhotski.timetable.domain
+
+import java.time.Instant
+import java.time.ZoneId
+
+data class Timetable(val station: Station, val departures: List<Departure>)
+
+/** [zone] is UTC and [zoneIsFallback] is true when the API gave no usable time zone. */
+data class Station(val name: String, val zone: ZoneId, val zoneIsFallback: Boolean)
+
+data class Departure(
+    val id: String,
+    val lineCode: String,
+    val direction: String,
+    val scheduled: Instant,
+    val status: DepartureStatus,
+)
+
+sealed interface DepartureStatus {
+    /** No live data, or less than one whole minute late. */
+    data object Scheduled : DepartureStatus
+
+    data class Delayed(val expected: Instant) : DepartureStatus
+
+    data object Cancelled : DepartureStatus
+}
