@@ -10,6 +10,8 @@ import androidx.compose.ui.test.assertIsEnabled
 import androidx.compose.ui.test.assertIsNotEnabled
 import androidx.compose.ui.test.getUnclippedBoundsInRoot
 import androidx.compose.ui.test.hasAnyAncestor
+import androidx.compose.ui.test.hasAnyDescendant
+import androidx.compose.ui.test.hasScrollAction
 import androidx.compose.ui.test.hasScrollToIndexAction
 import androidx.compose.ui.test.hasText
 import androidx.compose.ui.test.isHeading
@@ -253,6 +255,16 @@ class TimetableScreenTest {
                 composeRule.onNodeWithText("Bialystok, Bus Station").getUnclippedBoundsInRoot().top,
         )
         composeRule.onAllNodesWithText("November", substring = true).assertCountEquals(1)
+    }
+
+    @Test
+    fun `error content scrolls`() {
+        setScreen(PreviewData.errorNoConnection)
+
+        composeRule.onNode(
+            hasScrollAction() and
+                hasAnyDescendant(hasText(context.getString(R.string.action_retry))),
+        ).assertExists()
     }
 
     @Test
