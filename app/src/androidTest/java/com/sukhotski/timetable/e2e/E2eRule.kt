@@ -50,10 +50,16 @@ class E2eRule(testInstance: Any, startTime: Instant = Instant.parse("2026-11-14T
         server.enqueue(MockResponse.Builder().code(200).body(fixtureText(name)).build())
     }
 
-    /** No answer at all: the server closes the connection, the app sees an IOException. */
+    /**
+     * The connection dies in the middle of the body. The app sees an IOException. Closing before
+     * any byte would be retried by OkHttp on a new connection, and that would eat the next response.
+     */
     fun enqueueNoResponse() {
         server.enqueue(
-            MockResponse.Builder().onRequestStart(SocketEffect.ShutdownConnection).build(),
+            MockResponse.Builder()
+                .body(fixtureText("departures-normal.json"))
+                .onResponseBody(SocketEffect.CloseSocket())
+                .build(),
         )
     }
 
