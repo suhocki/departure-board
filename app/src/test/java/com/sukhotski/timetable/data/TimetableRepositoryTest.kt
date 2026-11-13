@@ -9,6 +9,7 @@ import com.sukhotski.timetable.testing.fixture
 import java.time.Duration
 import java.time.Instant
 import java.time.ZoneId
+import java.util.concurrent.TimeUnit
 import kotlinx.coroutines.test.runTest
 import mockwebserver3.MockResponse
 import mockwebserver3.MockWebServer
@@ -141,6 +142,22 @@ class TimetableRepositoryTest {
             LoadResult.Failure(LoadError.NoConnection),
             repository.departures("station-1", from, to),
         )
+    }
+
+    @Test
+    fun `maps call timeout on a slow body to no connection`() = runTest {
+        server.enqueue(
+            MockResponse.Builder()
+                .body(fixture("departures-full.json"))
+                .throttleBody(1, 1, TimeUnit.SECONDS)
+                .build(),
+        )
+        val client = OkHttpClient.Builder().callTimeout(Duration.ofMillis(200)).build()
+        val slowRepository = DefaultTimetableRepository(createTimetableApi(server.url("/"), client))
+
+        val result = slowRepository.departures("station-1", from, to)
+
+        assertEquals(LoadResult.Failure(LoadError.NoConnection), result)
     }
 
     @Test

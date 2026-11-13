@@ -38,4 +38,12 @@ class NetworkModuleTest {
         assertEquals("/gis/v2/timetable/station-1/departures", url.encodedPath)
         assertTrue("apiKey" in url.queryParameterNames)
     }
+
+    @Test
+    fun `real client limits the whole call`() {
+        assertEquals(
+            CALL_TIMEOUT.toMillis().toInt(),
+            NetworkModule.okHttpClient().callTimeoutMillis,
+        )
+    }
 }
