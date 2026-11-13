@@ -134,6 +134,7 @@ modules and the clock are the seams.
 
 I used AI as a tool, under my supervision at both the high level and the low level.
 
-The design and a commit-by-commit plan came first. The app was then built from that plan in one
-evening, one tested commit at a time, so the commit times are only minutes apart.
-The commits after "Add README" are fixes from two code review rounds.
+Everything followed a plan made up front: first the API research, the design and the edge cases,
+then a commit-by-commit plan where each commit has its rules and the tests that prove them.
+The app was built from that plan in one evening, one tested commit at a time, so the commit
+times are only minutes apart. The commits after "Add README" are fixes from two code review rounds.
