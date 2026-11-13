@@ -1,17 +1,21 @@
 package com.sukhotski.timetable.data
 
+import com.sukhotski.timetable.data.remote.DeviationDto
 import com.sukhotski.timetable.data.remote.RideDto
 import com.sukhotski.timetable.data.remote.TimetableResponse
 import com.sukhotski.timetable.domain.Departure
 import com.sukhotski.timetable.domain.DepartureStatus
 import com.sukhotski.timetable.domain.Station
 import com.sukhotski.timetable.domain.Timetable
+import com.sukhotski.timetable.domain.delayMinutes
 import com.sukhotski.timetable.domain.departureOrder
 import java.time.DateTimeException
 import java.time.Instant
 import java.time.OffsetDateTime
 import java.time.ZoneId
 import java.time.format.DateTimeParseException
+
+private const val CANCELLED = "CANCELLED"
 
 /** Returns null without a station name or time zone. Rides are not filtered by the request window. */
 internal fun TimetableResponse.toTimetable(): Timetable? {
@@ -42,8 +46,20 @@ internal fun RideDto.toDepartureOrNull(): Departure? {
         lineCode = code,
         direction = direction,
         scheduled = scheduled,
-        status = DepartureStatus.Scheduled,
+        status = status?.deviation.toStatus(scheduled),
     )
+}
+
+// The timestamp decides, not the class: an unknown class cannot break it.
+private fun DeviationDto?.toStatus(scheduled: Instant): DepartureStatus {
+    if (this == null) return DepartureStatus.Scheduled
+    if (deviationClass == CANCELLED) return DepartureStatus.Cancelled
+    val expected = parseInstantOrNull(deviationTimestamp) ?: return DepartureStatus.Scheduled
+    return if (delayMinutes(scheduled, expected) >= 1) {
+        DepartureStatus.Delayed(expected)
+    } else {
+        DepartureStatus.Scheduled
+    }
 }
 
 private fun parseInstantOrNull(raw: String?): Instant? {

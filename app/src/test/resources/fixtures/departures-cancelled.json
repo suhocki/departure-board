@@ -1,0 +1,491 @@
+{
+  "rides": [
+    {
+      "id": "1109ff45-ecdc-48b7-a072-1e26e26ef7c2",
+      "status": {
+        "segment": null,
+        "next_stop_sequence": null,
+        "has_arrived_at_next_stop": null,
+        "progress": null,
+        "deviation": null,
+        "scheduled_timestamp": "2026-11-14T12:40:00Z"
+      },
+      "platform": null,
+      "line": {
+        "code": "N3207",
+        "direction": "Kyiv (Central Bus Station)",
+        "name": "Kyiv - Berlin - Hanover",
+        "trip_number": 4,
+        "means_of_transport": "BUS",
+        "brand": {
+          "id": "a18f138c-68fa-4b45-a42f-adb0378e10d3",
+          "name": "FlixBus"
+        }
+      },
+      "location": null,
+      "omitted_calls": null,
+      "vehicle": {
+        "id": "375175ad-8ed3-468c-b810-570c2a9ccc27",
+        "license_plate": null,
+        "type": "BUS"
+      },
+      "brand": null
+    },
+    {
+      "id": "0f25865f-acc1-4da2-8ed7-cca93361e546",
+      "status": {
+        "segment": null,
+        "next_stop_sequence": null,
+        "has_arrived_at_next_stop": null,
+        "progress": null,
+        "deviation": null,
+        "scheduled_timestamp": "2026-11-14T12:45:00Z"
+      },
+      "platform": null,
+      "line": {
+        "code": "CDK081",
+        "direction": "Tetovo bus station",
+        "name": "Berlin - North Macedonia",
+        "trip_number": 1,
+        "means_of_transport": "BUS",
+        "brand": {
+          "id": "089266ce-97ba-4847-b479-d3b0cfe162f3",
+          "name": "Besa Bus ApS "
+        }
+      },
+      "location": null,
+      "omitted_calls": null,
+      "vehicle": null,
+      "brand": null
+    },
+    {
+      "id": "334404eb-048a-425e-be8f-abec21763e16",
+      "status": {
+        "segment": null,
+        "next_stop_sequence": null,
+        "has_arrived_at_next_stop": null,
+        "progress": null,
+        "deviation": null,
+        "scheduled_timestamp": "2026-11-14T13:00:00Z"
+      },
+      "platform": null,
+      "line": {
+        "code": "N1385",
+        "direction": "Gdansk, Bus Station",
+        "name": "Gdańsk - Munich - Rome",
+        "trip_number": 1,
+        "means_of_transport": "BUS",
+        "brand": {
+          "id": "a18f138c-68fa-4b45-a42f-adb0378e10d3",
+          "name": "FlixBus"
+        }
+      },
+      "location": {
+        "coordinates": {
+          "latitude": 41.908123,
+          "longitude": 12.531744
+        },
+        "updated_at": "2026-11-13T16:05:51Z",
+        "speed_category": "SLOW"
+      },
+      "omitted_calls": null,
+      "vehicle": {
+        "id": "7dcdba52-c821-4b00-8d06-9aeba30a997a",
+        "license_plate": null,
+        "type": "BUS"
+      },
+      "brand": null
+    },
+    {
+      "id": "38a723f5-4d68-4527-9890-73ac1a1f40a0",
+      "status": {
+        "segment": null,
+        "next_stop_sequence": null,
+        "has_arrived_at_next_stop": false,
+        "progress": null,
+        "deviation": {
+          "deviation_timestamp": "2026-11-14T13:00:00Z",
+          "deviation_seconds": 0,
+          "reason": null,
+          "deviation_class": "ON_TIME",
+          "deviation_type": "ESTIMATED",
+          "updated_at": "2026-11-13T16:05:19Z"
+        },
+        "scheduled_timestamp": "2026-11-14T13:00:00Z"
+      },
+      "platform": null,
+      "line": {
+        "code": "N1335",
+        "direction": "Torun, Bus Station",
+        "name": "Torun - Berlin - Troyes",
+        "trip_number": 6,
+        "means_of_transport": "BUS",
+        "brand": {
+          "id": "a18f138c-68fa-4b45-a42f-adb0378e10d3",
+          "name": "FlixBus"
+        }
+      },
+      "location": {
+        "coordinates": {
+          "latitude": 48.33329,
+          "longitude": 4.100575
+        },
+        "updated_at": "2026-11-13T16:05:57Z",
+        "speed_category": "SLOW"
+      },
+      "omitted_calls": null,
+      "vehicle": {
+        "id": "b5fb35b8-dd34-4ab5-bca9-85c426dbefe0",
+        "license_plate": null,
+        "type": "BUS"
+      },
+      "brand": null
+    },
+    {
+      "id": "12c8c8d8-99d8-4217-a4d2-5d11e221c739",
+      "status": {
+        "segment": null,
+        "next_stop_sequence": null,
+        "has_arrived_at_next_stop": null,
+        "progress": null,
+        "deviation": null,
+        "scheduled_timestamp": "2026-11-14T13:00:00Z"
+      },
+      "platform": null,
+      "line": {
+        "code": "1324",
+        "direction": "Rotterdam Central Station",
+        "name": "Warsaw - Berlin - Amsterdam",
+        "trip_number": 1,
+        "means_of_transport": "BUS",
+        "brand": {
+          "id": "a18f138c-68fa-4b45-a42f-adb0378e10d3",
+          "name": "FlixBus"
+        }
+      },
+      "location": null,
+      "omitted_calls": null,
+      "vehicle": {
+        "id": "b8596171-7832-490f-b3e7-324ca65e0bab",
+        "license_plate": null,
+        "type": "BUS"
+      },
+      "brand": null
+    },
+    {
+      "id": "fb70ebd1-0c47-4137-8588-d193d902b10f",
+      "status": {
+        "segment": null,
+        "next_stop_sequence": null,
+        "has_arrived_at_next_stop": null,
+        "progress": null,
+        "deviation": null,
+        "scheduled_timestamp": "2026-11-14T13:05:00Z"
+      },
+      "platform": null,
+      "line": {
+        "code": "N160",
+        "direction": "Copenhagen Busterminal",
+        "name": "Copenhagen - Berlin - Trieste",
+        "trip_number": 3,
+        "means_of_transport": "BUS",
+        "brand": {
+          "id": "a18f138c-68fa-4b45-a42f-adb0378e10d3",
+          "name": "FlixBus"
+        }
+      },
+      "location": null,
+      "omitted_calls": null,
+      "vehicle": {
+        "id": "235b7eb0-e462-4285-9ae1-ea0d0454bbb7",
+        "license_plate": null,
+        "type": "BUS"
+      },
+      "brand": null
+    },
+    {
+      "id": "697f028a-8d60-41a2-b3df-31304e529b7f",
+      "status": {
+        "segment": null,
+        "next_stop_sequence": null,
+        "has_arrived_at_next_stop": false,
+        "progress": null,
+        "deviation": {
+          "deviation_timestamp": null,
+          "deviation_seconds": null,
+          "reason": null,
+          "deviation_class": "CANCELLED",
+          "deviation_type": "ACTUAL",
+          "updated_at": "2026-09-08T12:15:29Z"
+        },
+        "scheduled_timestamp": "2026-11-14T13:20:00Z"
+      },
+      "platform": null,
+      "line": {
+        "code": "N3212",
+        "direction": "Bremen Fernbusterminal",
+        "name": "Odesa - Berlin - Bremen",
+        "trip_number": 1,
+        "means_of_transport": "BUS",
+        "brand": {
+          "id": "a18f138c-68fa-4b45-a42f-adb0378e10d3",
+          "name": "FlixBus"
+        }
+      },
+      "location": null,
+      "omitted_calls": null,
+      "vehicle": {
+        "id": "6f3c9b57-ee9e-48ab-a1ee-69d3051369a0",
+        "license_plate": null,
+        "type": "BUS"
+      },
+      "brand": null
+    },
+    {
+      "id": "6cb1c9e5-0ba6-43be-989b-5d87ea20d9f6",
+      "status": {
+        "segment": null,
+        "next_stop_sequence": null,
+        "has_arrived_at_next_stop": null,
+        "progress": null,
+        "deviation": null,
+        "scheduled_timestamp": "2026-11-14T13:20:00Z"
+      },
+      "platform": null,
+      "line": {
+        "code": "N3207",
+        "direction": "Hanover central bus station",
+        "name": "Kyiv - Berlin - Hanover",
+        "trip_number": 3,
+        "means_of_transport": "BUS",
+        "brand": {
+          "id": "a18f138c-68fa-4b45-a42f-adb0378e10d3",
+          "name": "FlixBus"
+        }
+      },
+      "location": null,
+      "omitted_calls": null,
+      "vehicle": {
+        "id": "e15cd7dd-04e9-42b8-9411-79b054353688",
+        "license_plate": null,
+        "type": "BUS"
+      },
+      "brand": null
+    },
+    {
+      "id": "f0fe87a5-0bd5-4029-bc2f-963d0d0a47ca",
+      "status": {
+        "segment": null,
+        "next_stop_sequence": null,
+        "has_arrived_at_next_stop": null,
+        "progress": null,
+        "deviation": null,
+        "scheduled_timestamp": "2026-11-14T13:20:00Z"
+      },
+      "platform": null,
+      "line": {
+        "code": "034",
+        "direction": "Munich central bus station",
+        "name": "Hamburg - Munich",
+        "trip_number": 10,
+        "means_of_transport": "BUS",
+        "brand": {
+          "id": "a18f138c-68fa-4b45-a42f-adb0378e10d3",
+          "name": "FlixBus"
+        }
+      },
+      "location": null,
+      "omitted_calls": null,
+      "vehicle": null,
+      "brand": null
+    },
+    {
+      "id": "f9a96f9f-c63a-4a81-aa0b-c50263031e7a",
+      "status": {
+        "segment": null,
+        "next_stop_sequence": null,
+        "has_arrived_at_next_stop": null,
+        "progress": null,
+        "deviation": null,
+        "scheduled_timestamp": "2026-11-14T13:20:00Z"
+      },
+      "platform": null,
+      "line": {
+        "code": "1361",
+        "direction": "Krakow, MDA Bus Station",
+        "name": "Krakow - Berlin - Kühlungsborn",
+        "trip_number": 6,
+        "means_of_transport": "BUS",
+        "brand": {
+          "id": "a18f138c-68fa-4b45-a42f-adb0378e10d3",
+          "name": "FlixBus"
+        }
+      },
+      "location": null,
+      "omitted_calls": null,
+      "vehicle": {
+        "id": "d749189e-9423-4402-8595-e83d905b83bf",
+        "license_plate": null,
+        "type": "BUS"
+      },
+      "brand": null
+    },
+    {
+      "id": "0fbc5a0d-826c-4df0-b450-4d504796613d",
+      "status": {
+        "segment": null,
+        "next_stop_sequence": null,
+        "has_arrived_at_next_stop": null,
+        "progress": null,
+        "deviation": null,
+        "scheduled_timestamp": "2026-11-14T13:40:00Z"
+      },
+      "platform": null,
+      "line": {
+        "code": "N1335",
+        "direction": "Troyes (McArthurGlen)",
+        "name": "Torun - Berlin - Troyes",
+        "trip_number": 5,
+        "means_of_transport": "BUS",
+        "brand": {
+          "id": "a18f138c-68fa-4b45-a42f-adb0378e10d3",
+          "name": "FlixBus"
+        }
+      },
+      "location": null,
+      "omitted_calls": null,
+      "vehicle": {
+        "id": "7344e6f0-b692-42e7-8aa1-72556fbcd876",
+        "license_plate": null,
+        "type": "BUS"
+      },
+      "brand": null
+    },
+    {
+      "id": "4763e6ef-18d3-482d-be2f-3246e0fc5677",
+      "status": {
+        "segment": null,
+        "next_stop_sequence": null,
+        "has_arrived_at_next_stop": null,
+        "progress": null,
+        "deviation": null,
+        "scheduled_timestamp": "2026-11-14T13:40:00Z"
+      },
+      "platform": null,
+      "line": {
+        "code": "025",
+        "direction": "Leipzig central train station",
+        "name": "Berlin - Leipzig",
+        "trip_number": 5,
+        "means_of_transport": "BUS",
+        "brand": {
+          "id": "a18f138c-68fa-4b45-a42f-adb0378e10d3",
+          "name": "FlixBus"
+        }
+      },
+      "location": null,
+      "omitted_calls": null,
+      "vehicle": {
+        "id": "76172147-4e94-4af3-89fd-2d9342be8256",
+        "license_plate": null,
+        "type": "BUS"
+      },
+      "brand": null
+    },
+    {
+      "id": "06225d23-b888-4eda-808d-10b46da399f6",
+      "status": {
+        "segment": null,
+        "next_stop_sequence": null,
+        "has_arrived_at_next_stop": null,
+        "progress": null,
+        "deviation": null,
+        "scheduled_timestamp": "2026-11-14T14:00:00Z"
+      },
+      "platform": null,
+      "line": {
+        "code": "CBS891",
+        "direction": "Plovdiv Bus Station South",
+        "name": "Plovdiv - Hamburg",
+        "trip_number": 2,
+        "means_of_transport": "BUS",
+        "brand": {
+          "id": "7a3d103b-c4e7-4640-98dc-79e5364642e3",
+          "name": "Racic"
+        }
+      },
+      "location": null,
+      "omitted_calls": null,
+      "vehicle": null,
+      "brand": null
+    },
+    {
+      "id": "c86e6936-701b-4bd4-8945-2282d30643f8",
+      "status": {
+        "segment": null,
+        "next_stop_sequence": null,
+        "has_arrived_at_next_stop": null,
+        "progress": null,
+        "deviation": null,
+        "scheduled_timestamp": "2026-11-14T14:00:00Z"
+      },
+      "platform": null,
+      "line": {
+        "code": "K1920",
+        "direction": "Tetovo bus station",
+        "name": "Tetovo - Hannover\n",
+        "trip_number": 2,
+        "means_of_transport": "BUS",
+        "brand": {
+          "id": "3b530a23-a0c9-4a0d-a25c-6970c3a50dfc",
+          "name": "Ido Tours"
+        }
+      },
+      "location": null,
+      "omitted_calls": null,
+      "vehicle": null,
+      "brand": null
+    },
+    {
+      "id": "afcb68eb-c7d7-4fff-9970-adf1e4fe5338",
+      "status": {
+        "segment": null,
+        "next_stop_sequence": null,
+        "has_arrived_at_next_stop": null,
+        "progress": null,
+        "deviation": null,
+        "scheduled_timestamp": "2026-11-14T14:00:00Z"
+      },
+      "platform": null,
+      "line": {
+        "code": "060",
+        "direction": "Vienna Erdberg (Busterminal VIB)",
+        "name": "Bremen/Berlin - Vienna/Bratislava/Zagreb",
+        "trip_number": 70,
+        "means_of_transport": "BUS",
+        "brand": {
+          "id": "a18f138c-68fa-4b45-a42f-adb0378e10d3",
+          "name": "FlixBus"
+        }
+      },
+      "location": null,
+      "omitted_calls": null,
+      "vehicle": {
+        "id": "a730642f-5f61-441b-87b0-132e27131b17",
+        "license_plate": null,
+        "type": "BUS"
+      },
+      "brand": null
+    }
+  ],
+  "station": {
+    "id": "dcbaaee6-9603-11e6-9066-549f350fcb0c",
+    "name": "Berlin central bus station",
+    "timezone": "Europe/Berlin",
+    "description": "Gate information available here: https://zob.berlin/en",
+    "coordinates": {
+      "latitude": 52.507171,
+      "longitude": 13.279399
+    }
+  }
+}

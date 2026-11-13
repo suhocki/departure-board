@@ -26,7 +26,16 @@ data class RideDto(
 data class LineDto(val code: String? = null, val direction: String? = null)
 
 @Serializable
-data class StatusDto(@SerialName("scheduled_timestamp") val scheduledTimestamp: String? = null)
+data class StatusDto(
+    @SerialName("scheduled_timestamp") val scheduledTimestamp: String? = null,
+    val deviation: DeviationDto? = null,
+)
+
+@Serializable
+data class DeviationDto(
+    @SerialName("deviation_class") val deviationClass: String? = null,
+    @SerialName("deviation_timestamp") val deviationTimestamp: String? = null,
+)
 
 val TimetableJson = Json {
     ignoreUnknownKeys = true

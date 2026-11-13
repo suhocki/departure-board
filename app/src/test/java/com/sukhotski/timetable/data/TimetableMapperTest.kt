@@ -3,6 +3,7 @@ package com.sukhotski.timetable.data
 import com.sukhotski.timetable.data.remote.TimetableJson
 import com.sukhotski.timetable.data.remote.TimetableResponse
 import com.sukhotski.timetable.domain.Departure
+import com.sukhotski.timetable.domain.DepartureStatus
 import com.sukhotski.timetable.domain.Timetable
 import com.sukhotski.timetable.testing.fixture
 import com.sukhotski.timetable.testing.ridesJson
@@ -99,6 +100,63 @@ class TimetableMapperTest {
         assertEquals("N1338", departures.single().lineCode)
     }
 
+    @Test
+    fun `maps later deviation timestamp to delayed`() {
+        val departures = map(fixture("departures-normal.json")).departures
+
+        assertEquals(
+            DepartureStatus.Delayed(Instant.parse("2026-11-13T16:24:36Z")),
+            departures.byCode("060").status,
+        )
+        assertEquals(5, departures.count { it.status is DepartureStatus.Delayed })
+    }
+
+    @Test
+    fun `treats missing deviation and zero delay as scheduled`() {
+        val departures = map(fixture("departures-normal.json")).departures
+
+        assertEquals(DepartureStatus.Scheduled, departures.byCode("050").status)
+        assertEquals(DepartureStatus.Scheduled, departures.byCode("N1385").status)
+        assertEquals(DepartureStatus.Scheduled, statusOf("""{"deviation_class":"LATE"}"""))
+        assertEquals(
+            DepartureStatus.Scheduled,
+            statusOf("""{"deviation_class":"LATE","deviation_timestamp":"soon"}"""),
+        )
+    }
+
+    @Test
+    fun `ignores delay under one minute and early departure`() {
+        assertEquals(DepartureStatus.Scheduled, statusOf(deviation("LATE", "2026-11-13T16:20:59Z")))
+        assertEquals(
+            DepartureStatus.Scheduled,
+            statusOf(deviation("ON_TIME", "2026-11-13T16:15:00Z")),
+        )
+    }
+
+    @Test
+    fun `uses the timestamp not the class to detect a delay`() {
+        val fiveMinutesLate = DepartureStatus.Delayed(Instant.parse("2026-11-13T16:25:00Z"))
+
+        assertEquals(fiveMinutesLate, statusOf(deviation("ON_TIME", "2026-11-13T16:25:00Z")))
+        assertEquals(fiveMinutesLate, statusOf(deviation("SOMETHING_NEW", "2026-11-13T16:25:00Z")))
+        assertEquals(DepartureStatus.Scheduled, statusOf(deviation("LATE", "2026-11-13T16:20:00Z")))
+    }
+
+    @Test
+    fun `marks cancelled ride as cancelled`() {
+        val departures = map(fixture("departures-cancelled.json")).departures
+        val cancelled = departures.byCode("N3212")
+
+        assertEquals(DepartureStatus.Cancelled, cancelled.status)
+        assertEquals(Instant.parse("2026-11-14T13:20:00Z"), cancelled.scheduled)
+        assertEquals(15, departures.size)
+        assertTrue(departures.indexOf(cancelled) in 1 until departures.lastIndex)
+        assertEquals(
+            DepartureStatus.Cancelled,
+            statusOf(deviation("CANCELLED", "2026-11-13T16:40:00Z")),
+        )
+    }
+
     private fun mapOrNull(json: String): Timetable? =
         TimetableJson.decodeFromString<TimetableResponse>(json).toTimetable()
 
@@ -106,6 +164,16 @@ class TimetableMapperTest {
 
     private fun departures(vararg rides: String): List<Departure> =
         map(ridesJson(*rides)).departures
+
+    private fun List<Departure>.byCode(code: String): Departure = single { it.lineCode == code }
+
+    /** Status of a ride scheduled at 16:20Z with the given deviation object. */
+    private fun statusOf(deviation: String): DepartureStatus = departures(
+        """{"id":"r","status":{"scheduled_timestamp":"2026-11-13T16:20:00Z","deviation":$deviation},"line":{"code":"N1","direction":"A"}}""",
+    ).single().status
+
+    private fun deviation(deviationClass: String, timestamp: String) =
+        """{"deviation_class":"$deviationClass","deviation_timestamp":"$timestamp"}"""
 
     private companion object {
         const val GOOD_RIDE =
