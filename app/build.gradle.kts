@@ -31,6 +31,16 @@ android {
         // Versions are pinned on purpose. Updates are a separate change.
         disable += setOf("GradleDependency", "NewerVersionAvailable", "AndroidGradlePluginVersion")
     }
+    testOptions {
+        unitTests {
+            all {
+                // A zone far from Europe, so code that reads the device zone fails on any laptop.
+                it.systemProperty("user.timezone", "Asia/Kolkata")
+                it.systemProperty("user.language", "en")
+                it.systemProperty("user.country", "US")
+            }
+        }
+    }
 }
 
 kotlin {
@@ -49,4 +59,6 @@ dependencies {
     implementation(platform(libs.androidx.compose.bom))
     implementation(libs.androidx.compose.ui)
     implementation(libs.androidx.compose.material3)
+
+    testImplementation(libs.junit)
 }

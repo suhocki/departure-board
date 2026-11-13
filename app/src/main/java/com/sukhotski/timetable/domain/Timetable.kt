@@ -24,3 +24,5 @@ sealed interface DepartureStatus {
 
     data object Cancelled : DepartureStatus
 }
+
+val departureOrder: Comparator<Departure> = compareBy({ it.scheduled }, { it.lineCode }, { it.id })
