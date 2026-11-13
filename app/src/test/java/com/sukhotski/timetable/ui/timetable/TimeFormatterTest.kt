@@ -1,6 +1,7 @@
 package com.sukhotski.timetable.ui.timetable
 
 import java.time.Instant
+import java.time.LocalDate
 import java.time.ZoneId
 import java.time.ZoneOffset
 import java.util.Locale
@@ -60,6 +61,12 @@ class TimeFormatterTest {
         // 02:00-03:00 local happens twice on 2027-10-31
         assertEquals("02:30", formatter24.time(Instant.parse("2027-10-31T00:30:00Z"), berlin))
         assertEquals("02:30", formatter24.time(Instant.parse("2027-10-31T01:30:00Z"), berlin))
+    }
+
+    @Test
+    fun `formats date header`() {
+        assertEquals("Saturday, 14 November", formatter24.date(LocalDate.of(2026, 11, 14)))
+        assertEquals("Friday, 13 November", formatter24.date(LocalDate.of(2026, 11, 13)))
     }
 
     @Test

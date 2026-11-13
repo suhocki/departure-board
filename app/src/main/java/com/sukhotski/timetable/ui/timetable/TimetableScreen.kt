@@ -97,21 +97,39 @@ private fun LoadedContent(
             onRefresh = onRefresh,
             modifier = Modifier.weight(1f),
         ) {
+            val items = remember(state.timetable, state.updatedAt) {
+                timetableItems(state.timetable, state.updatedAt)
+            }
             LazyColumn(state = listState, modifier = Modifier.fillMaxSize()) {
-                if (state.timetable.departures.isEmpty()) {
+                if (items.isEmpty()) {
                     item { EmptyContent(hours, Modifier.fillParentMaxSize()) }
                 }
                 itemsIndexed(
-                    items = state.timetable.departures,
-                    key = { _, departure -> departure.id },
-                ) { index, departure ->
+                    items = items,
+                    key = { _, item -> item.key },
+                    contentType = { _, item -> item::class },
+                ) { index, item ->
                     if (index > 0) HorizontalDivider()
-                    DepartureRow(departure, station.zone, formatter)
+                    when (item) {
+                        is TimetableItem.DateHeader -> DateHeader(formatter.date(item.date))
+
+                        is TimetableItem.Ride -> DepartureRow(
+                            item.departure,
+                            station.zone,
+                            formatter,
+                        )
+                    }
                 }
             }
         }
     }
 }
+
+private val TimetableItem.key: String
+    get() = when (this) {
+        is TimetableItem.DateHeader -> "date:${date.toEpochDay()}"
+        is TimetableItem.Ride -> departure.id
+    }
 
 @Composable
 private fun StationHeader(station: Station, updatedAt: Instant, hours: Int) {
@@ -141,6 +159,19 @@ private fun StationHeader(station: Station, updatedAt: Instant, hours: Int) {
             color = MaterialTheme.colorScheme.onSurfaceVariant,
         )
     }
+}
+
+@Composable
+private fun DateHeader(text: String) {
+    Text(
+        text = text,
+        style = MaterialTheme.typography.labelLarge,
+        color = MaterialTheme.colorScheme.primary,
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(start = 16.dp, end = 16.dp, top = 16.dp, bottom = 8.dp)
+            .semantics { heading() },
+    )
 }
 
 /** The only place that reads the device 12/24 hour setting and locale. */

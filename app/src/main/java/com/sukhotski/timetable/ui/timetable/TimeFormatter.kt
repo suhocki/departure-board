@@ -1,6 +1,7 @@
 package com.sukhotski.timetable.ui.timetable
 
 import java.time.Instant
+import java.time.LocalDate
 import java.time.ZoneId
 import java.time.ZoneOffset
 import java.time.format.DateTimeFormatter
@@ -16,8 +17,11 @@ class TimeFormatter(is24Hour: Boolean, locale: Locale) {
         if (is24Hour) "HH:mm" else "h:mm a",
         locale,
     )
+    private val dateFormat = DateTimeFormatter.ofPattern("EEEE, d MMMM", locale)
 
     fun time(instant: Instant, zone: ZoneId): String = timeFormat.format(instant.atZone(zone))
+
+    fun date(date: LocalDate): String = dateFormat.format(date)
 }
 
 /** "UTC+1", "UTC+5:30", "UTC-5" or "UTC". Zone names like CET differ between platforms and locales. */

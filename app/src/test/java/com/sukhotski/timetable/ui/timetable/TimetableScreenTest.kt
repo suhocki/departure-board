@@ -1,11 +1,13 @@
 package com.sukhotski.timetable.ui.timetable
 
 import android.content.Context
+import androidx.compose.ui.test.assertCountEquals
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.getUnclippedBoundsInRoot
 import androidx.compose.ui.test.hasText
 import androidx.compose.ui.test.isHeading
 import androidx.compose.ui.test.junit4.v2.createComposeRule
+import androidx.compose.ui.test.onAllNodesWithText
 import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
@@ -191,6 +193,24 @@ class TimetableScreenTest {
                 "23:40",
             ),
         ).assertExists()
+    }
+
+    @Test
+    fun `shows date header before rides of the next day`() {
+        setScreen(PreviewData.content)
+
+        val header = composeRule.onNode(hasText("Saturday, 14 November") and isHeading())
+        header.assertIsDisplayed()
+        val headerBounds = header.getUnclippedBoundsInRoot()
+        assertTrue(
+            composeRule.onNodeWithText("23:40").getUnclippedBoundsInRoot().bottom <=
+                headerBounds.top,
+        )
+        assertTrue(
+            headerBounds.bottom <=
+                composeRule.onNodeWithText("Bialystok, Bus Station").getUnclippedBoundsInRoot().top,
+        )
+        composeRule.onAllNodesWithText("November", substring = true).assertCountEquals(1)
     }
 
     private fun setScreen(state: TimetableUiState, onRefresh: () -> Unit = {}) {

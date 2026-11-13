@@ -11,7 +11,10 @@ sealed interface TimetableUiState {
 
     data class Loaded(
         val timetable: Timetable,
-        /** The start of the requested window. Also the data time in the refresh banner. */
+        /**
+         * The start of the requested window. Also "today" for date headers
+         * and the data time in the refresh banner.
+         */
         val updatedAt: Instant,
         val isRefreshing: Boolean = false,
         /** Set when a refresh failed and the list on screen is older. */
