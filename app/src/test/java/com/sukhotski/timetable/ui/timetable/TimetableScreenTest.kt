@@ -99,6 +99,18 @@ class TimetableScreenTest {
         ).assertIsDisplayed()
     }
 
+    @Test
+    fun `refresh action calls back`() {
+        var refreshes = 0
+        setScreen(PreviewData.content, onRefresh = { refreshes++ })
+
+        composeRule.onNodeWithContentDescription(
+            context.getString(R.string.action_refresh),
+        ).performClick()
+
+        assertEquals(1, refreshes)
+    }
+
     private fun setScreen(state: TimetableUiState, onRefresh: () -> Unit = {}) {
         composeRule.setContent {
             TimetableTheme {

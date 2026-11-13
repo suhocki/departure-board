@@ -10,6 +10,7 @@
         <item quantity="one">Next %1$d hour · Times in UTC (station time zone unknown)</item>
         <item quantity="other">Next %1$d hours · Times in UTC (station time zone unknown)</item>
     </plurals>
+    <string name="action_refresh">Refresh</string>
     <string name="action_retry">Retry</string>
     <string name="loading_description">Loading departures</string>
     <string name="error_no_connection_title">No connection</string>
