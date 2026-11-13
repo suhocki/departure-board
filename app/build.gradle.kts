@@ -35,6 +35,7 @@ android {
         targetSdk = 36
         versionCode = 1
         versionName = "1.0"
+        testInstrumentationRunner = "com.sukhotski.timetable.HiltTestRunner"
         buildConfigField(
             "String",
             "TIMETABLE_API_KEY",
@@ -67,6 +68,10 @@ android {
             "AndroidGradlePluginVersion",
             "OldTargetApi",
         )
+    }
+    sourceSets {
+        // The instrumented tests read the same saved API responses as the JVM tests.
+        getByName("androidTest").resources.srcDir("src/test/resources")
     }
     testOptions {
         unitTests {
@@ -118,6 +123,16 @@ dependencies {
     testImplementation(libs.androidx.compose.ui.test.junit4)
     testImplementation(libs.roborazzi)
     testImplementation(libs.roborazzi.compose)
+
+    androidTestImplementation(libs.androidx.test.ext.junit)
+    androidTestImplementation(libs.androidx.test.runner)
+    // Compose brings 3.5, which crashes on Android 16 (InputManager.getInstance).
+    androidTestImplementation(libs.androidx.test.espresso.core)
+    androidTestImplementation(libs.okhttp.mockwebserver)
+    androidTestImplementation(libs.hilt.android.testing)
+    androidTestImplementation(platform(libs.androidx.compose.bom))
+    androidTestImplementation(libs.androidx.compose.ui.test.junit4)
+    kspAndroidTest(libs.hilt.compiler)
 
     debugImplementation(libs.androidx.compose.ui.tooling)
     debugImplementation(libs.androidx.compose.ui.test.manifest)
