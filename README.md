@@ -34,6 +34,20 @@ Times are shown in the station's time zone, whatever zone the phone is in.
 - Cancelled rides stay in the list and are marked with the word "Cancelled".
 - Late rides scheduled before `now` are kept. The API returns them on purpose: they have not left yet.
 
+## Architecture
+
+One module, three packages. `domain` is plain Kotlin, no Android, no network. Hilt wires it in `di/`.
+
+```
+ui/timetable                      domain                      data
+TimetableScreen (Compose)         Timetable, Departure        DefaultTimetableRepository
+   ^ TimetableUiState             LoadResult                     -> TimetableApi (Retrofit, OkHttp)
+TimetableViewModel  -- calls -->  TimetableRepository  <------   -> TimetableMapper (DTO to domain)
+   (Clock, 2 hour window)                              implements
+```
+
+The ViewModel asks for one window, the repository returns `LoadResult<Timetable>`, the screen renders one state.
+
 ## Decisions
 
 | Decision | Why | Not taken |
@@ -76,19 +90,26 @@ In production both would go to crash reporting as non-fatals, from `TimetableMap
 
 ## Tests
 
-95 JVM tests, 5 of them screenshot tests, no emulator needed:
+95 tests, all on the JVM (Robolectric for Android parts), no emulator, no network:
 
-- Pure unit tests: domain, JSON models, mapper, time formatting, date headers.
-- Repository on real OkHttp, Retrofit and MockWebServer, with saved real API responses in `app/src/test/resources/fixtures`.
-- The production `NetworkModule` client and API with a fake transport: base URL, path and API key.
-- ViewModel with a fake repository, a mutable clock and Turbine.
-- Compose UI tests on Robolectric for the row and the screen, including TalkBack descriptions,
-  and for the formatter built from the device locale and 12/24 hour setting.
-- Roborazzi screenshots in `app/src/test/screenshots`: content, dark, 200% font, empty, no connection.
-  `./gradlew verifyRoborazziDebug` compares them and also runs all unit tests.
+| Type | Count | What |
+|---|---|---|
+| Unit | 32 | Domain, JSON models, mapper, time formatting, date headers |
+| Data | 14 | Repository on real OkHttp, Retrofit and MockWebServer with saved real API responses (`app/src/test/resources/fixtures`); the production `NetworkModule` with a fake transport (URL, path, API key) |
+| ViewModel | 15 | Fake repository, mutable clock, Turbine |
+| Compose UI | 29 | Row and screen on Robolectric, TalkBack descriptions, the formatter built from device locale and 12/24h setting |
+| Screenshot | 5 | Roborazzi goldens in `app/src/test/screenshots`: content, dark, 200% font, empty, no connection |
 
-Not covered by automated tests: the real API, the pull gesture, `onStart` calling the stale check, rotation and process death.
-These were checked by hand on an emulator. Instrumented tests are the next step; the API factory, the Hilt modules and the clock are the seams.
+```
+./gradlew testDebugUnitTest      # all 95
+./gradlew verifyRoborazziDebug   # all 95, and screenshots compared with the goldens
+```
+
+CI runs `ktlintCheck lintDebug verifyRoborazziDebug assembleRelease` on every push.
+
+There are no instrumented tests yet. The real API, the pull gesture, `onStart` calling the stale check, rotation and
+process death were checked by hand on an emulator. Instrumented tests are the next step; the API factory, the Hilt
+modules and the clock are the seams.
 
 ## Not done on purpose
 
@@ -111,7 +132,7 @@ These were checked by hand on an emulator. Instrumented tests are the next step;
 
 ## AI use
 
-I used AI while building this, under my supervision at both the high level and the low level.
+I used AI as a tool, under my supervision at both the high level and the low level.
 
 The design and a commit-by-commit plan came first. The app was then built from that plan in one
 evening, one tested commit at a time, so the commit times are only minutes apart.
