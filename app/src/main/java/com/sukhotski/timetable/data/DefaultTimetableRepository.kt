@@ -8,13 +8,14 @@ import com.sukhotski.timetable.domain.TimetableRepository
 import java.io.IOException
 import java.time.Instant
 import javax.inject.Inject
-import kotlinx.serialization.SerializationException
-import retrofit2.HttpException
+import kotlin.coroutines.cancellation.CancellationException
 
 class DefaultTimetableRepository @Inject constructor(private val api: TimetableApi) :
     TimetableRepository {
 
     // Error bodies are never read: the API sends plain text, JSON or nothing.
+    // Anything other than a connection failure is Unexpected: HTTP errors, a body that does not
+    // parse, a 2xx without a body. Only cancellation is rethrown.
     override suspend fun departures(
         stationId: String,
         from: Instant,
@@ -24,9 +25,9 @@ class DefaultTimetableRepository @Inject constructor(private val api: TimetableA
             api.departures(stationId, from.toString(), to.toString())
         } catch (_: IOException) {
             return LoadResult.Failure(LoadError.NoConnection)
-        } catch (_: HttpException) {
-            return LoadResult.Failure(LoadError.Unexpected)
-        } catch (_: SerializationException) {
+        } catch (e: CancellationException) {
+            throw e
+        } catch (_: Exception) {
             return LoadResult.Failure(LoadError.Unexpected)
         }
         val timetable = response.toTimetable() ?: return LoadResult.Failure(LoadError.Unexpected)

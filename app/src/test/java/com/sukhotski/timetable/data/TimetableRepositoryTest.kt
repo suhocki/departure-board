@@ -124,6 +124,16 @@ class TimetableRepositoryTest {
     }
 
     @Test
+    fun `maps 204 without body to unexpected`() = runTest {
+        server.enqueue(MockResponse.Builder().code(204).build())
+
+        assertEquals(
+            LoadResult.Failure(LoadError.Unexpected),
+            repository.departures("station-1", from, to),
+        )
+    }
+
+    @Test
     fun `maps connection failure to no connection`() = runTest {
         server.close()
 

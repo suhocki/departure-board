@@ -62,7 +62,7 @@ or pass `-PtimetableApiKey=<key>`, or set `TIMETABLE_API_KEY`. Tests do not need
 | Delay under one minute or early departure | Shown as scheduled | `TimetableMapperTest.ignores delay under one minute and early departure` |
 | Delay above 30 minutes | `Expected HH:mm` instead of minutes | `DepartureRowTest.delay above 30 minutes shows expected time` |
 | Cancelled ride | Struck time and "Cancelled" | `DepartureRowTest.cancelled ride shows the word and a struck time` |
-| 401, 400, 404 with empty body, 503, broken JSON | "Something went wrong" with Retry | `TimetableRepositoryTest.maps ...` tests |
+| 401, 400, 404 with empty body, 503, broken JSON, 204 without body | "Something went wrong" with Retry | `TimetableRepositoryTest.maps ...` tests |
 | No network | "No connection" with Retry | `TimetableRepositoryTest.maps connection failure to no connection` |
 | Refresh fails with a list on screen | List stays, banner with the data time | `TimetableViewModelTest.failed refresh keeps content and sets refresh error`, `TimetableScreenTest.failed refresh shows banner above the list` |
 | Empty response | "No departures", pull to refresh still works | `TimetableScreenTest.empty shows message` |
