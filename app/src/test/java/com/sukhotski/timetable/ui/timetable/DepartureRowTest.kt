@@ -2,9 +2,12 @@ package com.sukhotski.timetable.ui.timetable
 
 import android.content.Context
 import androidx.compose.foundation.layout.Column
+import androidx.compose.ui.semantics.SemanticsActions
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.v2.createComposeRule
 import androidx.compose.ui.test.onNodeWithText
+import androidx.compose.ui.text.TextLayoutResult
+import androidx.compose.ui.text.style.TextDecoration
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.sukhotski.timetable.R
@@ -16,6 +19,7 @@ import java.time.Duration
 import java.time.Instant
 import java.time.ZoneId
 import java.util.Locale
+import org.junit.Assert.assertEquals
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -99,6 +103,24 @@ class DepartureRowTest {
             context.getString(R.string.departure_expected, ""),
             substring = true,
         ).assertDoesNotExist()
+    }
+
+    @Test
+    fun `cancelled ride shows the word and a struck time`() {
+        setRows(
+            departure(
+                scheduled = Instant.parse("2026-11-14T13:20:00Z"),
+                status = DepartureStatus.Cancelled,
+            ),
+        )
+
+        composeRule.onNodeWithText(
+            context.getString(R.string.departure_cancelled),
+        ).assertIsDisplayed()
+        val time = composeRule.onNodeWithText("14:20", useUnmergedTree = true).fetchSemanticsNode()
+        val layouts = mutableListOf<TextLayoutResult>()
+        time.config[SemanticsActions.GetTextLayoutResult].action?.invoke(layouts)
+        assertEquals(TextDecoration.LineThrough, layouts.single().layoutInput.style.textDecoration)
     }
 
     private fun setRows(vararg departures: Departure, formatter: TimeFormatter = this.formatter) {

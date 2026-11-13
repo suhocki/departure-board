@@ -12,6 +12,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.sukhotski.timetable.R
@@ -34,14 +35,22 @@ fun DepartureRow(
     formatter: TimeFormatter,
     modifier: Modifier = Modifier,
 ) {
+    val isCancelled = departure.status is DepartureStatus.Cancelled
+    // The word "Cancelled" carries the meaning. Color and strike-through only support it.
+    val textColor = if (isCancelled) {
+        MaterialTheme.colorScheme.onSurfaceVariant
+    } else {
+        Color.Unspecified
+    }
     ListItem(
-        headlineContent = { Text(departure.direction) },
-        supportingContent = { Text(departure.lineCode) },
+        headlineContent = { Text(departure.direction, color = textColor) },
+        supportingContent = { Text(departure.lineCode, color = textColor) },
         trailingContent = {
             Column(horizontalAlignment = Alignment.End) {
                 Text(
                     text = formatter.time(departure.scheduled, zone),
                     style = MaterialTheme.typography.titleMedium,
+                    textDecoration = if (isCancelled) TextDecoration.LineThrough else null,
                 )
                 statusText(departure, zone, formatter)?.let {
                     Text(
@@ -63,7 +72,9 @@ fun DepartureRow(
 @Composable
 private fun statusText(departure: Departure, zone: ZoneId, formatter: TimeFormatter): String? =
     when (val status = departure.status) {
-        DepartureStatus.Scheduled, DepartureStatus.Cancelled -> null
+        DepartureStatus.Scheduled -> null
+
+        DepartureStatus.Cancelled -> stringResource(R.string.departure_cancelled)
 
         is DepartureStatus.Delayed -> {
             val minutes = delayMinutes(departure.scheduled, status.expected)

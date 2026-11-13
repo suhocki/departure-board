@@ -15,6 +15,7 @@
     <string name="loading_description">Loading departures</string>
     <string name="departure_delay">+%1$d min</string>
     <string name="departure_expected">Expected %1$s</string>
+    <string name="departure_cancelled">Cancelled</string>
     <string name="empty_title">No departures</string>
     <plurals name="empty_body">
         <item quantity="one">No buses leave this station in the next %1$d hour. Pull down to refresh.</item>
