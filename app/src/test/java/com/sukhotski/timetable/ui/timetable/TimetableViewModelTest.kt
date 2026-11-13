@@ -32,6 +32,7 @@ class TimetableViewModelTest {
     private val station =
         Station("Berlin central bus station", ZoneId.of("Europe/Berlin"), zoneIsFallback = false)
     private val timetable = Timetable(station, listOf(departure(id = "first")))
+    private val newerTimetable = Timetable(station, listOf(departure(id = "second")))
 
     @Test
     fun `shows loading then content`() = runTest {
@@ -92,6 +93,77 @@ class TimetableViewModelTest {
             ),
             repository.calls,
         )
+    }
+
+    @Test
+    fun `retry after error loads again`() = runTest {
+        repository.results += LoadResult.Failure(LoadError.NoConnection)
+        repository.results += LoadResult.Success(timetable)
+        val viewModel = createViewModel()
+
+        viewModel.state.test {
+            assertEquals(TimetableUiState.Loading, awaitItem())
+            assertEquals(TimetableUiState.Error(LoadError.NoConnection), awaitItem())
+            viewModel.refresh()
+            assertEquals(TimetableUiState.Loading, awaitItem())
+            assertEquals(TimetableUiState.Loaded(timetable, updatedAt = start), awaitItem())
+        }
+    }
+
+    @Test
+    fun `refresh keeps content while loading`() = runTest {
+        repository.results += LoadResult.Success(timetable)
+        repository.results += LoadResult.Success(newerTimetable)
+        val viewModel = createViewModel()
+
+        viewModel.state.test {
+            skipItems(1)
+            val loaded = TimetableUiState.Loaded(timetable, updatedAt = start)
+            assertEquals(loaded, awaitItem())
+            viewModel.refresh()
+            assertEquals(loaded.copy(isRefreshing = true), awaitItem())
+            assertEquals(TimetableUiState.Loaded(newerTimetable, updatedAt = start), awaitItem())
+        }
+    }
+
+    @Test
+    fun `refresh asks for a new window from the clock`() = runTest {
+        repository.results += LoadResult.Success(timetable)
+        repository.results += LoadResult.Success(newerTimetable)
+        val viewModel = createViewModel()
+        advanceUntilIdle()
+
+        clock.advanceBy(Duration.ofMinutes(10))
+        viewModel.refresh()
+        advanceUntilIdle()
+
+        val later = start + Duration.ofMinutes(10)
+        assertEquals(
+            FakeTimetableRepository.Call(
+                TimetableViewModel.STATION_ID,
+                later,
+                later + Duration.ofHours(2),
+            ),
+            repository.calls.last(),
+        )
+        assertEquals(
+            TimetableUiState.Loaded(newerTimetable, updatedAt = later),
+            viewModel.state.value,
+        )
+    }
+
+    @Test
+    fun `ignores refresh while a request is running`() = runTest {
+        repository.results += LoadResult.Success(timetable)
+        repository.results += LoadResult.Success(newerTimetable)
+        val viewModel = createViewModel()
+        advanceUntilIdle()
+
+        viewModel.refresh()
+        viewModel.refresh()
+        advanceUntilIdle()
+
+        assertEquals(2, repository.calls.size)
     }
 
     private fun createViewModel() = TimetableViewModel(repository, clock)

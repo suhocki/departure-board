@@ -9,6 +9,7 @@ import java.time.Clock
 import java.time.Duration
 import java.time.temporal.ChronoUnit
 import javax.inject.Inject
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -23,12 +24,22 @@ class TimetableViewModel @Inject constructor(
     private val _state = MutableStateFlow<TimetableUiState>(TimetableUiState.Loading)
     val state: StateFlow<TimetableUiState> = _state.asStateFlow()
 
+    private var loadJob: Job? = null
+
     init {
         load()
     }
 
+    /** Pull to refresh, the Refresh action and Retry. */
+    fun refresh() {
+        load()
+    }
+
     private fun load() {
-        viewModelScope.launch {
+        if (loadJob?.isActive == true) return
+        val previous = _state.value as? TimetableUiState.Loaded
+        _state.value = previous?.copy(isRefreshing = true) ?: TimetableUiState.Loading
+        loadJob = viewModelScope.launch {
             val now = clock.instant().truncatedTo(ChronoUnit.MINUTES)
             _state.value =
                 when (val result = repository.departures(STATION_ID, now, now + WINDOW)) {

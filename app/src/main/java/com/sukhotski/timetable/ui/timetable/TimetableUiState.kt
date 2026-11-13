@@ -13,5 +13,6 @@ sealed interface TimetableUiState {
         val timetable: Timetable,
         /** The start of the requested window. */
         val updatedAt: Instant,
+        val isRefreshing: Boolean = false,
     ) : TimetableUiState
 }
