@@ -1,6 +1,7 @@
 package com.sukhotski.timetable.data
 
 import com.sukhotski.timetable.data.remote.TimetableApi
+import com.sukhotski.timetable.di.DefaultDispatcher
 import com.sukhotski.timetable.domain.LoadError
 import com.sukhotski.timetable.domain.LoadResult
 import com.sukhotski.timetable.domain.Timetable
@@ -9,11 +10,14 @@ import java.io.IOException
 import java.time.Instant
 import javax.inject.Inject
 import kotlin.coroutines.cancellation.CancellationException
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.withContext
 import retrofit2.HttpException
 
 class DefaultTimetableRepository @Inject constructor(
     private val api: TimetableApi,
     private val errorReporter: ErrorReporter,
+    @param:DefaultDispatcher private val mappingDispatcher: CoroutineDispatcher,
 ) : TimetableRepository {
 
     // Error bodies are never read: the API sends plain text, JSON or nothing.
@@ -37,7 +41,8 @@ class DefaultTimetableRepository @Inject constructor(
         } catch (e: Exception) {
             return unexpected(e)
         }
-        val timetable = response.toTimetable()
+        // Retrofit parses JSON off the main thread, but the dates and the sort run here.
+        val timetable = withContext(mappingDispatcher) { response.toTimetable() }
             ?: return unexpected(UnexpectedResponseException("No station name"))
         val dropped = response.rides.size - timetable.departures.size
         if (dropped > 0) errorReporter.droppedRides(dropped)

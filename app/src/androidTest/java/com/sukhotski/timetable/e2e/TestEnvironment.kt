@@ -6,6 +6,7 @@ import com.sukhotski.timetable.data.remote.ApiKeyInterceptor
 import com.sukhotski.timetable.data.remote.TimetableApi
 import com.sukhotski.timetable.data.remote.createTimetableApi
 import com.sukhotski.timetable.di.DataModule
+import com.sukhotski.timetable.di.DefaultDispatcher
 import com.sukhotski.timetable.di.NetworkModule
 import com.sukhotski.timetable.domain.TimetableRepository
 import dagger.Module
@@ -18,6 +19,7 @@ import java.time.Instant
 import java.time.ZoneId
 import java.time.ZoneOffset
 import javax.inject.Singleton
+import kotlinx.coroutines.CoroutineDispatcher
 import mockwebserver3.MockWebServer
 import okhttp3.OkHttpClient
 
@@ -70,6 +72,9 @@ object TestAppModule {
     fun clock(): Clock = TestEnvironment.clock
 
     @Provides
-    fun repository(api: TimetableApi, errorReporter: ErrorReporter): TimetableRepository =
-        DefaultTimetableRepository(api, errorReporter)
+    fun repository(
+        api: TimetableApi,
+        errorReporter: ErrorReporter,
+        @DefaultDispatcher mappingDispatcher: CoroutineDispatcher,
+    ): TimetableRepository = DefaultTimetableRepository(api, errorReporter, mappingDispatcher)
 }

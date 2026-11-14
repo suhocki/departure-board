@@ -12,6 +12,12 @@ import java.time.Duration
 import java.time.Instant
 import java.time.ZoneId
 import java.util.concurrent.TimeUnit
+import kotlin.coroutines.CoroutineContext
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.Runnable
+import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.runTest
 import mockwebserver3.MockResponse
 import mockwebserver3.MockWebServer
@@ -27,6 +33,9 @@ class TimetableRepositoryTest {
 
     private val server = MockWebServer()
     private val reporter = FakeErrorReporter()
+
+    @OptIn(ExperimentalCoroutinesApi::class)
+    private val mapping = UnconfinedTestDispatcher()
     private lateinit var repository: DefaultTimetableRepository
 
     private val from = Instant.parse("2026-11-13T16:05:00Z")
@@ -37,7 +46,11 @@ class TimetableRepositoryTest {
         server.start()
         val client = OkHttpClient.Builder().addInterceptor(ApiKeyInterceptor("test-key")).build()
         repository =
-            DefaultTimetableRepository(createTimetableApi(server.url("/"), client), reporter)
+            DefaultTimetableRepository(
+                createTimetableApi(server.url("/"), client),
+                reporter,
+                mapping,
+            )
     }
 
     @After
@@ -159,7 +172,11 @@ class TimetableRepositoryTest {
         )
         val client = OkHttpClient.Builder().callTimeout(Duration.ofMillis(200)).build()
         val slowRepository =
-            DefaultTimetableRepository(createTimetableApi(server.url("/"), client), reporter)
+            DefaultTimetableRepository(
+                createTimetableApi(server.url("/"), client),
+                reporter,
+                mapping,
+            )
 
         val result = slowRepository.departures("station-1", from, to)
 
@@ -220,6 +237,23 @@ class TimetableRepositoryTest {
         }
     }
 
+    @Test
+    fun `maps the response on the injected dispatcher`() = runTest {
+        val dispatcher = CountingDispatcher()
+        val client = OkHttpClient.Builder().build()
+        val repository =
+            DefaultTimetableRepository(
+                createTimetableApi(server.url("/"), client),
+                reporter,
+                dispatcher,
+            )
+        enqueue(200, fixture("departures-normal.json"))
+
+        success(repository.departures("station-1", from, to))
+
+        assertEquals(1, dispatcher.dispatches)
+    }
+
     private fun enqueue(code: Int, body: String, contentType: String = "application/json") {
         server.enqueue(
             MockResponse.Builder()
@@ -233,5 +267,16 @@ class TimetableRepositoryTest {
     private fun success(result: LoadResult<Timetable>): Timetable {
         check(result is LoadResult.Success) { "Expected success, got $result" }
         return result.value
+    }
+
+    /** Runs on Dispatchers.Default and counts how often work was sent to it. */
+    private class CountingDispatcher : CoroutineDispatcher() {
+        @Volatile
+        var dispatches = 0
+
+        override fun dispatch(context: CoroutineContext, block: Runnable) {
+            dispatches++
+            Dispatchers.Default.dispatch(context, block)
+        }
     }
 }
