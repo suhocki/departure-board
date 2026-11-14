@@ -29,7 +29,7 @@ class TimetableJsonTest {
     }
 
     @Test
-    fun `ride with a wrong type is dropped and the others stay`() {
+    fun `ride with a wrong type becomes an empty ride and the others stay`() {
         val response = decode(
             """
             {"rides":[
@@ -42,7 +42,8 @@ class TimetableJsonTest {
         )
 
         assertEquals(
-            listOf(RideDto(id = "c", line = LineDto(code = "N1", direction = "Hamburg"))),
+            listOf(RideDto(), RideDto(), RideDto()) +
+                RideDto(id = "c", line = LineDto(code = "N1", direction = "Hamburg")),
             response.rides,
         )
     }

@@ -5,7 +5,9 @@ import com.sukhotski.timetable.data.remote.createTimetableApi
 import com.sukhotski.timetable.domain.LoadError
 import com.sukhotski.timetable.domain.LoadResult
 import com.sukhotski.timetable.domain.Timetable
+import com.sukhotski.timetable.testing.FakeErrorReporter
 import com.sukhotski.timetable.testing.fixture
+import com.sukhotski.timetable.testing.ridesJson
 import java.time.Duration
 import java.time.Instant
 import java.time.ZoneId
@@ -16,6 +18,7 @@ import mockwebserver3.MockWebServer
 import okhttp3.OkHttpClient
 import org.junit.After
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
@@ -23,6 +26,7 @@ import org.junit.Test
 class TimetableRepositoryTest {
 
     private val server = MockWebServer()
+    private val reporter = FakeErrorReporter()
     private lateinit var repository: DefaultTimetableRepository
 
     private val from = Instant.parse("2026-11-13T16:05:00Z")
@@ -32,7 +36,8 @@ class TimetableRepositoryTest {
     fun setUp() {
         server.start()
         val client = OkHttpClient.Builder().addInterceptor(ApiKeyInterceptor("test-key")).build()
-        repository = DefaultTimetableRepository(createTimetableApi(server.url("/"), client))
+        repository =
+            DefaultTimetableRepository(createTimetableApi(server.url("/"), client), reporter)
     }
 
     @After
@@ -153,7 +158,8 @@ class TimetableRepositoryTest {
                 .build(),
         )
         val client = OkHttpClient.Builder().callTimeout(Duration.ofMillis(200)).build()
-        val slowRepository = DefaultTimetableRepository(createTimetableApi(server.url("/"), client))
+        val slowRepository =
+            DefaultTimetableRepository(createTimetableApi(server.url("/"), client), reporter)
 
         val result = slowRepository.departures("station-1", from, to)
 
@@ -173,6 +179,45 @@ class TimetableRepositoryTest {
             LoadResult.Failure(LoadError.Unexpected),
             repository.departures("station-1", from, to),
         )
+    }
+
+    @Test
+    fun `reports the number of rides that were not shown`() = runTest {
+        val good =
+            """{"id":"a","status":{"scheduled_timestamp":"2026-11-13T16:20:00Z"},"line":{"code":"N1","direction":"A"}}"""
+        enqueue(200, ridesJson(good, """{"id":"b"}""", """{"id":123}"""))
+
+        val timetable = success(repository.departures("station-1", from, to))
+
+        assertEquals(1, timetable.departures.size)
+        assertEquals(listOf(2), reporter.dropped)
+        assertTrue(reporter.errors.isEmpty())
+    }
+
+    @Test
+    fun `reports nothing for a clean response or a connection failure`() = runTest {
+        enqueue(200, fixture("departures-normal.json"))
+        repository.departures("station-1", from, to)
+        server.close()
+        repository.departures("station-1", from, to)
+
+        assertTrue(reporter.dropped.isEmpty())
+        assertTrue(reporter.errors.isEmpty())
+    }
+
+    @Test
+    fun `reports unexpected failures without the url or the key`() = runTest {
+        enqueue(401, fixture("error-401.txt"), contentType = "text/plain")
+        enqueue(200, "not json")
+        enqueue(200, """{"rides":[]}""")
+
+        repeat(3) { repository.departures("station-1", from, to) }
+
+        assertEquals(3, reporter.errors.size)
+        for (error in reporter.errors) {
+            val text = error.stackTraceToString()
+            assertFalse(text, "test-key" in text || server.hostName in text)
+        }
     }
 
     private fun enqueue(code: Int, body: String, contentType: String = "application/json") {

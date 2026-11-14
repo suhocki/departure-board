@@ -75,7 +75,7 @@ The ViewModel asks for one window, the repository returns `LoadResult<Timetable>
 | Autumn DST night | Two rides can show the same `02:30`, the order is still real | `TimeFormatterTest.repeats the hour on autumn DST night`, `TimetableTest.orders by scheduled time then line code then id` |
 | Window crosses midnight | Date header `Saturday, November 14` (en-US) | `TimetableItemsTest.adds header before first ride of next day` |
 | Late ride from yesterday | Header for yesterday, then for today | `TimetableItemsTest.adds headers for a late ride from yesterday and for today after it` |
-| Ride without id, code, direction or a valid time, or with a wrong type | Dropped, other rides stay | `TimetableMapperTest.drops ride with unparseable scheduled time` and the other `drops ...` tests, `TimetableJsonTest.ride with a wrong type is dropped and the others stay` |
+| Ride without id, code, direction or a valid time, or with a wrong type | Dropped, other rides stay | `TimetableMapperTest.drops ride with unparseable scheduled time` and the other `drops ...` tests, `TimetableJsonTest.ride with a wrong type becomes an empty ride and the others stay` |
 | Duplicate ride ids | First one kept | `TimetableMapperTest.removes duplicate ride ids` |
 | Delay under one minute or early departure | Shown as scheduled | `TimetableMapperTest.ignores delay under one minute and early departure` |
 | `ON_TIME` with a later timestamp, unknown class | Shown as scheduled | `TimetableMapperTest.on time class with a later timestamp shows no delay`, `TimetableMapperTest.unknown or missing class is scheduled whatever the timestamp` |
@@ -87,8 +87,7 @@ The ViewModel asks for one window, the repository returns `LoadResult<Timetable>
 | Empty response | "No departures", pull to refresh still works | `TimetableScreenTest.empty shows message` |
 | 200% font size | Nothing is cut, the status wraps | screenshot `content_font_2x` |
 
-Dropped rides and load errors are silent now: there is no logging on purpose, the URL contains the key.
-In production both would go to crash reporting as non-fatals, from `TimetableMapper` and the catch blocks in `DefaultTimetableRepository`.
+`DefaultTimetableRepository` reports unexpected failures and the number of dropped rides to `ErrorReporter` (no-op now, never given a URL because it has the key); Crashlytics would plug in by binding its own implementation in `ReportingModule`.
 
 ## Tests
 

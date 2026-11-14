@@ -1,6 +1,7 @@
 package com.sukhotski.timetable.e2e
 
 import com.sukhotski.timetable.data.DefaultTimetableRepository
+import com.sukhotski.timetable.data.ErrorReporter
 import com.sukhotski.timetable.data.remote.ApiKeyInterceptor
 import com.sukhotski.timetable.data.remote.TimetableApi
 import com.sukhotski.timetable.data.remote.createTimetableApi
@@ -69,5 +70,6 @@ object TestAppModule {
     fun clock(): Clock = TestEnvironment.clock
 
     @Provides
-    fun repository(api: TimetableApi): TimetableRepository = DefaultTimetableRepository(api)
+    fun repository(api: TimetableApi, errorReporter: ErrorReporter): TimetableRepository =
+        DefaultTimetableRepository(api, errorReporter)
 }

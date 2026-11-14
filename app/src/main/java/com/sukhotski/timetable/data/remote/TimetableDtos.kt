@@ -46,8 +46,8 @@ data class DeviationDto(
 )
 
 /**
- * Decodes each ride on its own and drops rides with wrong types,
- * so one bad ride does not fail the whole list.
+ * Decodes each ride on its own. A ride with a wrong type becomes an empty [RideDto],
+ * so one bad ride does not fail the whole list. The mapper drops it and it is counted.
  */
 object LenientRideListSerializer : KSerializer<List<RideDto>> {
     private val elements = ListSerializer(JsonElement.serializer())
@@ -57,11 +57,11 @@ object LenientRideListSerializer : KSerializer<List<RideDto>> {
 
     override fun deserialize(decoder: Decoder): List<RideDto> {
         val json = (decoder as JsonDecoder).json
-        return elements.deserialize(decoder).mapNotNull {
+        return elements.deserialize(decoder).map {
             try {
                 json.decodeFromJsonElement(RideDto.serializer(), it)
             } catch (_: SerializationException) {
-                null
+                RideDto()
             }
         }
     }
