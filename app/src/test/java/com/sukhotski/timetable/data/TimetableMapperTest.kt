@@ -136,11 +136,31 @@ class TimetableMapperTest {
     }
 
     @Test
-    fun `uses the timestamp not the class to detect a delay`() {
-        val fiveMinutesLate = DepartureStatus.Delayed(Instant.parse("2026-11-13T16:25:00Z"))
+    fun `on time class with a later timestamp shows no delay`() {
+        assertEquals(
+            DepartureStatus.Scheduled,
+            statusOf(deviation("ON_TIME", "2026-11-13T16:24:06Z")),
+        )
+    }
 
-        assertEquals(fiveMinutesLate, statusOf(deviation("ON_TIME", "2026-11-13T16:25:00Z")))
-        assertEquals(fiveMinutesLate, statusOf(deviation("SOMETHING_NEW", "2026-11-13T16:25:00Z")))
+    @Test
+    fun `unknown or missing class is scheduled whatever the timestamp`() {
+        assertEquals(
+            DepartureStatus.Scheduled,
+            statusOf(deviation("SOMETHING_NEW", "2026-11-13T16:25:00Z")),
+        )
+        assertEquals(
+            DepartureStatus.Scheduled,
+            statusOf("""{"deviation_timestamp":"2026-11-13T16:25:00Z"}"""),
+        )
+    }
+
+    @Test
+    fun `late class takes the expected time from the timestamp`() {
+        assertEquals(
+            DepartureStatus.Delayed(Instant.parse("2026-11-13T16:25:00Z")),
+            statusOf(deviation("LATE", "2026-11-13T16:25:00Z")),
+        )
         assertEquals(DepartureStatus.Scheduled, statusOf(deviation("LATE", "2026-11-13T16:20:00Z")))
     }
 

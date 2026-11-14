@@ -57,7 +57,7 @@ The ViewModel asks for one window, the repository returns `LoadResult<Timetable>
 | Own `LoadResult` with two errors: `NoConnection` (any `IOException`, also timeouts and TLS errors), `Unexpected` (everything else) | The user has two actions: check the connection or retry. `kotlin.Result` loses the error type | One error per HTTP code |
 | Error bodies are never read | The API sends plain text, JSON or an empty body | Parsing error JSON |
 | Lenient parsing: a broken ride is dropped, the rest is shown | Only four fields are needed. One bad ride must not empty the screen | Failing the whole response |
-| Delay is decided by the timestamp, not `deviation_class` | The timestamp is a fact, an unknown class cannot break it | Trusting the class |
+| Delay follows `deviation_class`: `LATE` is delayed (expected time from `deviation_timestamp`), `CANCELLED` is cancelled, `ON_TIME` and unknown classes are scheduled | The backend owns the delay rules, so Android shows the same as web and iOS. A new class shows the plain time, never a wrong delay | Own threshold on the timestamp |
 | Caption `UTC+1`, computed from the offset | `CET`, `MEZ` and `GMT+1` differ between JVM, locale and Android | Zone abbreviations |
 | Explicit `HH:mm` / `h:mm a` patterns, 12/24h from the device | Localized styles ignore the 12/24h switch and differ between JDKs | `ofLocalizedTime` |
 | Date header pattern from the locale (`getBestDateTimePattern`) | `Saturday, November 14` in the US, `Samstag, 14. November` in Germany | One fixed pattern for all locales |
@@ -78,6 +78,7 @@ The ViewModel asks for one window, the repository returns `LoadResult<Timetable>
 | Ride without id, code, direction or a valid time, or with a wrong type | Dropped, other rides stay | `TimetableMapperTest.drops ride with unparseable scheduled time` and the other `drops ...` tests, `TimetableJsonTest.ride with a wrong type is dropped and the others stay` |
 | Duplicate ride ids | First one kept | `TimetableMapperTest.removes duplicate ride ids` |
 | Delay under one minute or early departure | Shown as scheduled | `TimetableMapperTest.ignores delay under one minute and early departure` |
+| `ON_TIME` with a later timestamp, unknown class | Shown as scheduled | `TimetableMapperTest.on time class with a later timestamp shows no delay`, `TimetableMapperTest.unknown or missing class is scheduled whatever the timestamp` |
 | Delay above 30 minutes | `Expected HH:mm` instead of minutes | `DepartureRowTest.delay above 30 minutes shows expected time` |
 | Cancelled ride | Struck time and "Cancelled" | `DepartureRowTest.cancelled ride shows the word and a struck time` |
 | 401, 400, 404 with empty body, 503, broken JSON, 204 without body | "Something went wrong" with Retry | `TimetableRepositoryTest.maps ...` tests |

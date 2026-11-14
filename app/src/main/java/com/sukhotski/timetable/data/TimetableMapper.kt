@@ -16,6 +16,7 @@ import java.time.ZoneId
 import java.time.ZoneOffset
 import java.time.format.DateTimeParseException
 
+private const val LATE = "LATE"
 private const val CANCELLED = "CANCELLED"
 
 /** Returns null when the response has no station name. Rides are not filtered by the request window. */
@@ -55,17 +56,23 @@ internal fun RideDto.toDepartureOrNull(): Departure? {
     )
 }
 
-// The timestamp decides, not the class: an unknown class cannot break it.
-private fun DeviationDto?.toStatus(scheduled: Instant): DepartureStatus {
-    if (this == null) return DepartureStatus.Scheduled
-    if (deviationClass == CANCELLED) return DepartureStatus.Cancelled
-    val expected = parseInstantOrNull(deviationTimestamp) ?: return DepartureStatus.Scheduled
-    return if (delayMinutes(scheduled, expected) >= 1) {
-        DepartureStatus.Delayed(expected)
-    } else {
-        DepartureStatus.Scheduled
+// The backend decides the class. Only LATE is a delay, its timestamp gives the expected time.
+// ON_TIME, unknown and missing classes are shown as scheduled.
+private fun DeviationDto?.toStatus(scheduled: Instant): DepartureStatus =
+    when (this?.deviationClass) {
+        CANCELLED -> DepartureStatus.Cancelled
+
+        LATE -> {
+            val expected = parseInstantOrNull(deviationTimestamp)
+            if (expected != null && delayMinutes(scheduled, expected) >= 1) {
+                DepartureStatus.Delayed(expected)
+            } else {
+                DepartureStatus.Scheduled
+            }
+        }
+
+        else -> DepartureStatus.Scheduled
     }
-}
 
 private fun parseInstantOrNull(raw: String?): Instant? {
     if (raw == null) return null

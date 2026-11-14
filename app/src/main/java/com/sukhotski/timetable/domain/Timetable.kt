@@ -18,7 +18,7 @@ data class Departure(
 )
 
 sealed interface DepartureStatus {
-    /** No live data, or less than one whole minute late. */
+    /** No live data, not LATE, or less than one whole minute late. */
     data object Scheduled : DepartureStatus
 
     data class Delayed(val expected: Instant) : DepartureStatus
