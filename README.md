@@ -91,25 +91,25 @@ The ViewModel asks for one window, the repository returns `LoadResult<Timetable>
 
 ## Tests
 
-95 tests on the JVM (Robolectric for Android parts), no emulator, no network, and 8 instrumented tests on an emulator:
+101 tests on the JVM (Robolectric for Android parts), no emulator, no network, and 8 instrumented tests on an emulator:
 
 | Type | Count | What |
 |---|---|---|
-| Unit | 32 | Domain, JSON models, mapper, time formatting, date headers |
-| Data | 14 | Repository on real OkHttp, Retrofit and MockWebServer with saved real API responses (`app/src/test/resources/fixtures`); the production `NetworkModule` with a fake transport (URL, path, API key) |
+| Unit | 34 | Domain, JSON models, mapper, time formatting, date headers |
+| Data | 18 | Repository on real OkHttp, Retrofit and MockWebServer with saved real API responses (`app/src/test/resources/fixtures`), what goes to `ErrorReporter`; the production `NetworkModule` with a fake transport (URL, path, API key) |
 | ViewModel | 15 | Fake repository, mutable clock, Turbine |
 | Compose UI | 29 | Row and screen on Robolectric, TalkBack descriptions, the formatter built from device locale and 12/24h setting |
 | Screenshot | 5 | Roborazzi goldens in `app/src/test/screenshots`: content, dark, 200% font, empty, no connection |
 | Instrumented | 8 | Real Activity, ViewModel, OkHttp and Retrofit on an emulator, against MockWebServer (`app/src/androidTest`) |
 
 ```
-./gradlew testDebugUnitTest      # all 95
-./gradlew verifyRoborazziDebug   # all 95, and screenshots compared with the goldens
+./gradlew testDebugUnitTest      # all 101
+./gradlew verifyRoborazziDebug   # all 101, and screenshots compared with the goldens
 ```
 
 CI runs `ktlintCheck lintDebug verifyRoborazziDebug assembleRelease` on every push.
 
-The 95 above do not include the instrumented ones. They run the real `MainActivity` and ViewModel with Hilt.
+The 101 above do not include the instrumented ones. They run the real `MainActivity` and ViewModel with Hilt.
 `TestAppModule` replaces the network and data modules: the same OkHttp setup is built again against MockWebServer,
 and the `Clock` is a test clock. They cover cold start, error then Retry,
 pull to refresh, rotation without a new request, return after the stale time, relaunch, delayed and cancelled rows.
@@ -139,7 +139,7 @@ on an emulator with Android 8.0 or newer, or start the manual `E2E` workflow on 
 
 I used AI as a tool, under my supervision at both the high level and the low level.
 
-Everything followed a plan made up front: first the API research, the design and the edge cases,
-then a commit-by-commit plan where each commit has its rules and the tests that prove them.
-The app was built from that plan in one evening, one tested commit at a time, so the commit
-times are only minutes apart. The commits after "Add README" are fixes from two code review rounds.
+The design and a commit-by-commit plan came first: the API research, the edge cases, and for each commit
+its rules and the tests that prove them. Then the code was generated with AI tooling, commit by commit from
+that plan, and I reviewed each one. That is why the first commit times are seconds to minutes apart.
+The later commits are fixes after review rounds.
