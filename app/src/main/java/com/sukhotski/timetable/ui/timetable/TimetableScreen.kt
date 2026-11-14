@@ -2,6 +2,9 @@ package com.sukhotski.timetable.ui.timetable
 
 import android.text.format.DateFormat
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.calculateEndPadding
+import androidx.compose.foundation.layout.calculateStartPadding
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -24,6 +27,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
@@ -83,8 +87,24 @@ fun TimetableScreen(
                     apiKeyMissing = apiKeyMissing,
                 )
 
-            is TimetableUiState.Loaded ->
-                LoadedContent(state, onRefresh, listState, formatter, contentModifier)
+            is TimetableUiState.Loaded -> {
+                // The bottom inset goes inside the list, so rows scroll under the navigation bar.
+                val layoutDirection = LocalLayoutDirection.current
+                LoadedContent(
+                    state,
+                    onRefresh,
+                    listState,
+                    formatter,
+                    listPadding = PaddingValues(bottom = padding.calculateBottomPadding()),
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(
+                            start = padding.calculateStartPadding(layoutDirection),
+                            top = padding.calculateTopPadding(),
+                            end = padding.calculateEndPadding(layoutDirection),
+                        ),
+                )
+            }
         }
     }
 }
@@ -96,6 +116,7 @@ private fun LoadedContent(
     onRefresh: () -> Unit,
     listState: LazyListState,
     formatter: TimeFormatter,
+    listPadding: PaddingValues,
     modifier: Modifier = Modifier,
 ) {
     val station = state.timetable.station
@@ -113,7 +134,11 @@ private fun LoadedContent(
                 timetableItems(state.timetable, state.updatedAt)
             }
             // The header scrolls with the rows, so large fonts and landscape keep room for the list.
-            LazyColumn(state = listState, modifier = Modifier.fillMaxSize()) {
+            LazyColumn(
+                state = listState,
+                modifier = Modifier.fillMaxSize(),
+                contentPadding = listPadding,
+            ) {
                 item(key = "header") { StationHeader(station, state.updatedAt, hours, formatter) }
                 if (items.isEmpty()) {
                     item {
