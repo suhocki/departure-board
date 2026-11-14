@@ -46,8 +46,11 @@ object TestEnvironment {
 }
 
 /**
- * Replaces only the base URL and the clock. OkHttp, the key interceptor, Retrofit, the repository
- * and the ViewModel are the production ones.
+ * Replaces all of NetworkModule and DataModule. The OkHttpClient is built again here with the
+ * production key interceptor and the same 15 s call timeout, so an interceptor added to
+ * NetworkModule is not seen here. Retrofit points at the mock server, the clock is the test clock,
+ * and the repository binding is redone with the production class. The ViewModel, ErrorReporter
+ * and dispatcher are the production ones.
  */
 @Module
 @TestInstallIn(

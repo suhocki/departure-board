@@ -80,7 +80,7 @@ The ViewModel asks for one window, the repository returns `LoadResult<Timetable>
 | Delay under one minute or early departure | Shown as scheduled | `TimetableMapperTest.ignores delay under one minute and early departure` |
 | `ON_TIME` with a later timestamp, unknown class | Shown as scheduled | `TimetableMapperTest.on time class with a later timestamp shows no delay`, `TimetableMapperTest.unknown or missing class is scheduled whatever the timestamp` |
 | Delay above 30 minutes | `Expected HH:mm` instead of minutes | `DepartureRowTest.delay above 30 minutes shows expected time` |
-| Cancelled ride | Struck time and "Cancelled" | `DepartureRowTest.cancelled ride shows the word and a struck time` |
+| Cancelled ride | Struck time and "Cancelled" | `DepartureRowTest.cancelled ride shows the word`, screenshot `content` |
 | 401, 400, 404 with empty body, 503, broken JSON, 204 without body | "Something went wrong" with Retry | `TimetableRepositoryTest.maps ...` tests |
 | No network, or no full answer in 15 s | "No connection" with Retry | `TimetableRepositoryTest.maps connection failure to no connection`, `TimetableRepositoryTest.maps call timeout on a slow body to no connection` |
 | Refresh fails with a list on screen | List stays, banner with the data time | `TimetableViewModelTest.failed refresh keeps content and sets refresh error`, `TimetableScreenTest.failed refresh shows banner above the list` |
@@ -109,8 +109,9 @@ The ViewModel asks for one window, the repository returns `LoadResult<Timetable>
 
 CI runs `ktlintCheck lintDebug verifyRoborazziDebug assembleRelease` on every push.
 
-The 95 above do not include the instrumented ones. They run the real `MainActivity` with Hilt, and only the base URL
-and the `Clock` are replaced (`TestAppModule`), so production code is the same. They cover cold start, error then Retry,
+The 95 above do not include the instrumented ones. They run the real `MainActivity` and ViewModel with Hilt.
+`TestAppModule` replaces the network and data modules: the same OkHttp setup is built again against MockWebServer,
+and the `Clock` is a test clock. They cover cold start, error then Retry,
 pull to refresh, rotation without a new request, return after the stale time, relaunch, delayed and cancelled rows.
 Debug builds allow cleartext to `localhost` for the mock server. Run them with `./gradlew connectedDebugAndroidTest`
 on an emulator with Android 8.0 or newer, or start the manual `E2E` workflow on GitHub. They are not part of CI.

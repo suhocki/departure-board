@@ -107,12 +107,12 @@ class TimetableE2eTest {
     }
 
     @Test
-    fun relaunchAfterProcessDeathLoadsAgain() {
+    fun relaunchedActivityLoadsAgain() {
         e2e.enqueueFixture("departures-normal.json")
         val first = e2e.launch()
         waitForText("Berlin central bus station")
 
-        // A killed process loses the ViewModel. Closing the Activity gives the same empty start.
+        // A closed Activity loses its ViewModel, so the new one starts empty and loads.
         first.close()
         e2e.enqueueFixture("departures-cancelled.json")
         e2e.launch()
