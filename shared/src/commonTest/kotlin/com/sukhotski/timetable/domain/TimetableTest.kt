@@ -1,11 +1,11 @@
 package com.sukhotski.timetable.domain
 
 import com.sukhotski.timetable.testing.departure
+import kotlin.test.Test
+import kotlin.test.assertEquals
 import kotlin.time.Duration.Companion.minutes
 import kotlin.time.Duration.Companion.seconds
 import kotlin.time.Instant
-import org.junit.Assert.assertEquals
-import org.junit.Test
 
 class TimetableTest {
 
