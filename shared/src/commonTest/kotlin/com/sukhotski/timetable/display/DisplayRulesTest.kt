@@ -4,6 +4,7 @@ import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.time.Duration.Companion.minutes
 import kotlin.time.Instant
+import kotlinx.datetime.TimeZone
 import kotlinx.datetime.UtcOffset
 
 class DisplayRulesTest {
@@ -16,6 +17,14 @@ class DisplayRulesTest {
         assertEquals("UTC+5:30", formatUtcOffset(UtcOffset(5, 30)))
         assertEquals("UTC-5", formatUtcOffset(UtcOffset(hours = -5)))
         assertEquals("UTC", formatUtcOffset(UtcOffset.ZERO))
+    }
+
+    @Test
+    fun `formats the offset of a zone at an instant`() {
+        val berlin = TimeZone.of("Europe/Berlin")
+
+        assertEquals("UTC+1", formatUtcOffset(berlin, Instant.parse("2026-11-13T16:20:00Z")))
+        assertEquals("UTC+2", formatUtcOffset(berlin, Instant.parse("2026-07-13T16:20:00Z")))
     }
 
     @Test

@@ -23,12 +23,37 @@ struct TimetableScreen: View {
         case .loading:
             ProgressView()
         case .loaded(let timetable):
-            List(timetable.departures, id: \.id) { departure in
-                DepartureRowView(departure: departure, zoneId: timetable.station.zone().id)
+            let zone = timetable.station.zone()
+            List {
+                header(timetable, zone: zone)
+                ForEach(timetable.departures, id: \.id) { departure in
+                    DepartureRowView(departure: departure, zoneId: zone.id)
+                }
             }
             .listStyle(.plain)
         case .failed:
             Text("Something went wrong")
         }
+    }
+
+    private func header(_ timetable: Timetable, zone: Kotlinx_datetimeTimeZone) -> some View {
+        let start = KotlinInstant.companion.fromEpochSeconds(
+            epochSeconds: Int64(model.updatedAt.timeIntervalSince1970),
+            nanosecondAdjustment: 0
+        )
+        let from = timeText(start, zoneId: zone.id)
+        let hours = Int(TimetableDefaults.shared.WINDOW_HOURS)
+        let unit = hours == 1 ? "hour" : "hours"
+        let zoneText = timetable.station.zoneIsFallback
+            ? "Times in UTC (station time zone unknown)"
+            : "Station time (\(UtcOffsetKt.formatUtcOffset(zone: zone, at: start)))"
+        return VStack(alignment: .leading, spacing: 2) {
+            Text(timetable.station.name)
+                .font(.title2)
+            Text("Next \(hours) \(unit) from \(from) · \(zoneText)")
+                .font(.subheadline)
+                .foregroundStyle(.secondary)
+        }
+        .listRowSeparator(.hidden)
     }
 }

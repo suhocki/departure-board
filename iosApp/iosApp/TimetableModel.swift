@@ -10,6 +10,8 @@ final class TimetableModel: ObservableObject {
     }
 
     @Published private(set) var state: State = .loading
+    /// The start of the window, cut to the minute like on Android.
+    @Published private(set) var updatedAt = Date()
 
     private let loader: IosTimetableLoader
 
@@ -20,9 +22,11 @@ final class TimetableModel: ObservableObject {
     func load() async {
         // The shared loader returns a result, it does not throw for network errors.
         // Anything else is shown as an unexpected error.
+        let started = Date()
         do {
             let result = try await loader.load()
             if let success = result as? LoadResultSuccess<Timetable>, let timetable = success.value {
+                updatedAt = Date(timeIntervalSince1970: floor(started.timeIntervalSince1970 / 60) * 60)
                 state = .loaded(timetable)
             } else if let failure = result as? LoadResultFailure {
                 state = .failed(failure.error)
