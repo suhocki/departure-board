@@ -25,15 +25,30 @@ struct TimetableScreen: View {
         case .loaded(let timetable):
             let zone = timetable.station.zone()
             List {
+                if let error = model.refreshError {
+                    Text("Could not refresh: \(message(for: error))")
+                        .font(.subheadline)
+                        .foregroundStyle(.red)
+                }
                 header(timetable, zone: zone)
                 ForEach(timetable.departures, id: \.id) { departure in
                     DepartureRowView(departure: departure, zoneId: zone.id)
                 }
             }
             .listStyle(.plain)
-        case .failed:
-            Text("Something went wrong")
+            .refreshable { await model.load() }
+        case .failed(let error):
+            VStack(spacing: 16) {
+                Text(message(for: error))
+                Button("Retry") { Task { await model.load() } }
+                    .buttonStyle(.borderedProminent)
+            }
+            .padding()
         }
+    }
+
+    private func message(for error: LoadError) -> String {
+        error == .noconnection ? "No connection" : "Something went wrong"
     }
 
     private func header(_ timetable: Timetable, zone: Kotlinx_datetimeTimeZone) -> some View {
