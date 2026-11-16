@@ -1,7 +1,5 @@
 package com.sukhotski.timetable.data
 
-import javax.inject.Inject
-
 /**
  * Where non-fatal problems go. A crash reporter (Crashlytics) would implement it.
  * Never gets a URL or a request: the API key is in the query.
@@ -14,7 +12,7 @@ interface ErrorReporter {
     fun droppedRides(count: Int)
 }
 
-class NoOpErrorReporter @Inject constructor() : ErrorReporter {
+class NoOpErrorReporter : ErrorReporter {
     override fun report(error: Throwable) = Unit
 
     override fun droppedRides(count: Int) = Unit

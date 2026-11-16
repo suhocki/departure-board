@@ -1,23 +1,21 @@
 package com.sukhotski.timetable.data
 
 import com.sukhotski.timetable.data.remote.TimetableApi
-import com.sukhotski.timetable.di.DefaultDispatcher
 import com.sukhotski.timetable.domain.LoadError
 import com.sukhotski.timetable.domain.LoadResult
 import com.sukhotski.timetable.domain.Timetable
 import com.sukhotski.timetable.domain.TimetableRepository
 import java.io.IOException
-import javax.inject.Inject
 import kotlin.coroutines.cancellation.CancellationException
 import kotlin.time.Instant
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.withContext
 import retrofit2.HttpException
 
-class DefaultTimetableRepository @Inject constructor(
+class DefaultTimetableRepository(
     private val api: TimetableApi,
     private val errorReporter: ErrorReporter,
-    @param:DefaultDispatcher private val mappingDispatcher: CoroutineDispatcher,
+    private val mappingDispatcher: CoroutineDispatcher,
 ) : TimetableRepository {
 
     // Error bodies are never read: the API sends plain text, JSON or nothing.

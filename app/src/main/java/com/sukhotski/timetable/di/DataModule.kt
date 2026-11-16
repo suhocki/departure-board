@@ -1,24 +1,28 @@
 package com.sukhotski.timetable.di
 
 import com.sukhotski.timetable.data.DefaultTimetableRepository
+import com.sukhotski.timetable.data.ErrorReporter
+import com.sukhotski.timetable.data.remote.TimetableApi
 import com.sukhotski.timetable.domain.TimetableRepository
-import dagger.Binds
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import kotlin.time.Clock
+import kotlinx.coroutines.CoroutineDispatcher
 
 @Module
 @InstallIn(SingletonComponent::class)
-abstract class DataModule {
+object DataModule {
 
-    @Binds
-    abstract fun timetableRepository(repository: DefaultTimetableRepository): TimetableRepository
+    @Provides
+    fun timetableRepository(
+        api: TimetableApi,
+        errorReporter: ErrorReporter,
+        @DefaultDispatcher mappingDispatcher: CoroutineDispatcher,
+    ): TimetableRepository = DefaultTimetableRepository(api, errorReporter, mappingDispatcher)
 
-    companion object {
-        /** The only source of the current time in the app. */
-        @Provides
-        fun clock(): Clock = Clock.System
-    }
+    /** The only source of the current time in the app. */
+    @Provides
+    fun clock(): Clock = Clock.System
 }
