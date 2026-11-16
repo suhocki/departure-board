@@ -1,1 +1,5 @@
-// Build settings shared by all configurations.
+// The API key is not stored in git. Put this line in Local.xcconfig (next to this file):
+//   TIMETABLE_API_KEY = <key>
+// Without a key the app builds, but every request fails and the error screen shows.
+TIMETABLE_API_KEY =
+#include? "Local.xcconfig"
