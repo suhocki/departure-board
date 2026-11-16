@@ -18,6 +18,12 @@ import io.ktor.http.HttpHeaders
 import io.ktor.http.HttpStatusCode
 import io.ktor.http.headersOf
 import kotlin.coroutines.CoroutineContext
+import kotlin.test.BeforeTest
+import kotlin.test.Test
+import kotlin.test.assertEquals
+import kotlin.test.assertFalse
+import kotlin.test.assertTrue
+import kotlin.time.Duration
 import kotlin.time.Duration.Companion.hours
 import kotlin.time.Duration.Companion.milliseconds
 import kotlin.time.Duration.Companion.seconds
@@ -31,11 +37,6 @@ import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.runTest
 import kotlinx.datetime.TimeZone
 import kotlinx.io.IOException
-import org.junit.Assert.assertEquals
-import org.junit.Assert.assertFalse
-import org.junit.Assert.assertTrue
-import org.junit.Before
-import org.junit.Test
 
 private typealias Responder = suspend MockRequestHandleScope.(HttpRequestData) -> HttpResponseData
 
@@ -52,7 +53,7 @@ class TimetableRepositoryTest {
     private val from = Instant.parse("2026-11-13T16:05:00Z")
     private val to = from + 2.hours
 
-    @Before
+    @BeforeTest
     fun setUp() {
         repository = repositoryWith(mapping)
     }
@@ -224,7 +225,7 @@ class TimetableRepositoryTest {
         assertEquals(3, reporter.errors.size)
         for (error in reporter.errors) {
             val text = error.stackTraceToString()
-            assertFalse(text, "test-key" in text || TEST_HOST in text)
+            assertFalse("test-key" in text || TEST_HOST in text, text)
         }
     }
 
@@ -241,7 +242,7 @@ class TimetableRepositoryTest {
 
     private fun repositoryWith(
         dispatcher: CoroutineDispatcher,
-        timeout: kotlin.time.Duration = 15.seconds,
+        timeout: Duration = 15.seconds,
     ): DefaultTimetableRepository {
         val engine = MockEngine { request ->
             requests += request
@@ -268,7 +269,7 @@ class TimetableRepositoryTest {
 
     /** Runs on Dispatchers.Default and counts how often work was sent to it. */
     private class CountingDispatcher : CoroutineDispatcher() {
-        @Volatile
+        @kotlin.concurrent.Volatile
         var dispatches = 0
 
         override fun dispatch(context: CoroutineContext, block: Runnable) {

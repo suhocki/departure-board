@@ -113,9 +113,6 @@ dependencies {
     implementation(libs.kotlinx.datetime)
     implementation(libs.hilt.android)
     ksp(libs.hilt.compiler)
-    implementation(libs.ktor.client.core)
-    implementation(libs.ktor.client.okhttp)
-    implementation(libs.okhttp)
 
     testImplementation(libs.junit)
     testImplementation(libs.kotlinx.coroutines.test)

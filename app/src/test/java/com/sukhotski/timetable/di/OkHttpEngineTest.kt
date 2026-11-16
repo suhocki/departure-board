@@ -1,11 +1,11 @@
 package com.sukhotski.timetable.di
 
 import com.sukhotski.timetable.data.DefaultTimetableRepository
+import com.sukhotski.timetable.data.NoOpErrorReporter
 import com.sukhotski.timetable.data.remote.TimetableApi
 import com.sukhotski.timetable.data.remote.createTimetableHttpClient
 import com.sukhotski.timetable.domain.LoadError
 import com.sukhotski.timetable.domain.LoadResult
-import com.sukhotski.timetable.testing.FakeErrorReporter
 import com.sukhotski.timetable.testing.fixture
 import io.ktor.client.engine.okhttp.OkHttp
 import java.util.concurrent.TimeUnit
@@ -81,7 +81,7 @@ class OkHttpEngineTest {
         )
         return DefaultTimetableRepository(
             TimetableApi(client, "test-key"),
-            FakeErrorReporter(),
+            NoOpErrorReporter(),
             Dispatchers.Default,
         )
     }

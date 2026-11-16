@@ -28,11 +28,21 @@ kotlin {
 
     sourceSets {
         commonMain.dependencies {
+            api(libs.ktor.client.core)
             implementation(libs.kotlinx.coroutines.core)
             api(libs.kotlinx.datetime)
             api(libs.kotlinx.serialization.json)
         }
+        androidMain.dependencies {
+            api(libs.ktor.client.okhttp)
+            // Pins OkHttp to the version the app and its tests use.
+            implementation(libs.okhttp)
+        }
+        iosMain.dependencies {
+            implementation(libs.ktor.client.darwin)
+        }
         commonTest.dependencies {
+            implementation(libs.ktor.client.mock)
             implementation(libs.kotlin.test)
             implementation(libs.kotlinx.coroutines.test)
         }

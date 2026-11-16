@@ -1,20 +1,16 @@
-package com.sukhotski.timetable.di
+package com.sukhotski.timetable.data.remote
 
-import com.sukhotski.timetable.data.remote.TIMETABLE_REQUEST_TIMEOUT
-import com.sukhotski.timetable.data.remote.TimetableApi
-import com.sukhotski.timetable.data.remote.createTimetableHttpClient
 import io.ktor.client.engine.mock.MockEngine
 import io.ktor.client.engine.mock.respond
 import io.ktor.client.plugins.HttpRequestTimeoutException
 import io.ktor.client.request.HttpRequestData
 import io.ktor.client.request.get
+import kotlin.test.Test
+import kotlin.test.assertEquals
 import kotlin.time.Duration.Companion.milliseconds
 import kotlin.time.Duration.Companion.seconds
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.test.runTest
-import org.junit.Assert.assertEquals
-import org.junit.Assert.assertThrows
-import org.junit.Test
 
 class TimetableHttpClientTest {
 
