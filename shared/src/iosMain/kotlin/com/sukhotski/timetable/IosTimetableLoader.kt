@@ -10,6 +10,7 @@ import com.sukhotski.timetable.domain.TimetableDefaults
 import io.ktor.client.engine.darwin.Darwin
 import kotlin.time.Clock
 import kotlin.time.Instant
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Dispatchers
 
 /** The one entry point for Swift. It builds the Darwin client and loads the next two hours. */
@@ -22,6 +23,7 @@ class IosTimetableLoader(apiKey: String) {
     )
 
     /** The window starts at the current minute, same as on Android. */
+    @Throws(CancellationException::class)
     suspend fun load(): LoadResult<Timetable> {
         val now = Clock.System.now()
         val from = Instant.fromEpochSeconds(now.epochSeconds / 60 * 60)

@@ -36,6 +36,7 @@ final class TimetableModel: ObservableObject {
         let started = Date()
         do {
             let result = try await loader.load()
+            if Task.isCancelled { return }
             if let success = result as? LoadResultSuccess<Timetable>, let timetable = success.value {
                 updatedAt = Date(timeIntervalSince1970: floor(started.timeIntervalSince1970 / 60) * 60)
                 state = .loaded(timetable)
@@ -45,6 +46,8 @@ final class TimetableModel: ObservableObject {
                 fail(.unexpected, keeping: previous)
             }
         } catch {
+            // The view went away or the refresh was cancelled: not an error for the user.
+            if Task.isCancelled || error is CancellationError { return }
             fail(.unexpected, keeping: previous)
         }
     }
