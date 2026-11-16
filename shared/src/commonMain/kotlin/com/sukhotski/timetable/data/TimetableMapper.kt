@@ -16,7 +16,7 @@ private const val LATE = "LATE"
 private const val CANCELLED = "CANCELLED"
 
 /** Returns null when the response has no station name. Rides are not filtered by the request window. */
-internal fun TimetableResponse.toTimetable(): Timetable? {
+fun TimetableResponse.toTimetable(): Timetable? {
     val stationDto = station ?: return null
     val name = stationDto.name?.takeIf { it.isNotBlank() } ?: return null
     val zone = parseZoneOrNull(stationDto.timezone)

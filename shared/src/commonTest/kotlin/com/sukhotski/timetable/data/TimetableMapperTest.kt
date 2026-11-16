@@ -7,13 +7,13 @@ import com.sukhotski.timetable.domain.DepartureStatus
 import com.sukhotski.timetable.domain.Timetable
 import com.sukhotski.timetable.testing.fixture
 import com.sukhotski.timetable.testing.ridesJson
+import kotlin.test.Test
+import kotlin.test.assertEquals
+import kotlin.test.assertFalse
+import kotlin.test.assertNull
+import kotlin.test.assertTrue
 import kotlin.time.Instant
 import kotlinx.datetime.TimeZone
-import org.junit.Assert.assertEquals
-import org.junit.Assert.assertFalse
-import org.junit.Assert.assertNull
-import org.junit.Assert.assertTrue
-import org.junit.Test
 
 class TimetableMapperTest {
 
@@ -186,9 +186,9 @@ class TimetableMapperTest {
                     """{"rides":[$GOOD_RIDE],"station":{"name":"Berlin central bus station","timezone":$timezone}}""",
                 )
 
-            assertEquals(timezone, TimeZone.UTC, timetable.station.zone)
-            assertTrue(timezone, timetable.station.zoneIsFallback)
-            assertEquals(timezone, 1, timetable.departures.size)
+            assertEquals(TimeZone.UTC, timetable.station.zone, timezone)
+            assertTrue(timetable.station.zoneIsFallback, timezone)
+            assertEquals(1, timetable.departures.size, timezone)
         }
         val padded =
             map(
