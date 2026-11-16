@@ -1,3 +1,5 @@
+import org.jetbrains.kotlin.gradle.targets.native.tasks.KotlinNativeSimulatorTest
+
 plugins {
     alias(libs.plugins.kotlin.multiplatform)
     alias(libs.plugins.android.kmp.library)
@@ -28,13 +30,21 @@ kotlin {
         commonMain.dependencies {
             implementation(libs.kotlinx.coroutines.core)
             api(libs.kotlinx.datetime)
-            implementation(libs.kotlinx.serialization.json)
+            api(libs.kotlinx.serialization.json)
         }
         commonTest.dependencies {
             implementation(libs.kotlin.test)
             implementation(libs.kotlinx.coroutines.test)
         }
     }
+}
+
+tasks.withType<KotlinNativeSimulatorTest>().configureEach {
+    // The simulator reads the saved API responses from the disk of this Mac.
+    environment(
+        "SIMCTL_CHILD_FIXTURES_DIR",
+        layout.projectDirectory.dir("src/commonTest/resources/fixtures").asFile.path,
+    )
 }
 
 ktlint {

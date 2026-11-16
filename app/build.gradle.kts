@@ -70,8 +70,9 @@ android {
         )
     }
     sourceSets {
-        // The instrumented tests read the same saved API responses as the JVM tests.
-        getByName("androidTest").resources.srcDir("src/test/resources")
+        // All tests read the saved API responses from the shared module.
+        getByName("androidTest").resources.srcDir("../shared/src/commonTest/resources")
+        getByName("test").resources.srcDir("../shared/src/commonTest/resources")
     }
     testOptions {
         unitTests {

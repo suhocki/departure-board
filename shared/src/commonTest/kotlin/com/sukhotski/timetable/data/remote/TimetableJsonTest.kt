@@ -1,9 +1,9 @@
 package com.sukhotski.timetable.data.remote
 
 import com.sukhotski.timetable.testing.fixture
-import org.junit.Assert.assertEquals
-import org.junit.Assert.assertNull
-import org.junit.Test
+import kotlin.test.Test
+import kotlin.test.assertEquals
+import kotlin.test.assertNull
 
 class TimetableJsonTest {
 

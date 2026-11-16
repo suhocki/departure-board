@@ -35,16 +35,17 @@ internal fun TimetableResponse.toTimetable(): Timetable? {
 
 /** Returns null when a field the list needs is missing, blank or not parseable. */
 internal fun RideDto.toDepartureOrNull(): Departure? {
+    val rideId = id
     val code = line?.code
     val direction = line?.direction
     val scheduled = parseInstantOrNull(status?.scheduledTimestamp)
-    if (id.isNullOrBlank() || code.isNullOrBlank() || direction.isNullOrBlank() ||
+    if (rideId.isNullOrBlank() || code.isNullOrBlank() || direction.isNullOrBlank() ||
         scheduled == null
     ) {
         return null
     }
     return Departure(
-        id = id,
+        id = rideId,
         lineCode = code,
         direction = direction,
         scheduled = scheduled,
