@@ -37,6 +37,20 @@ An Android app and a small iOS app on one shared Kotlin module. They show bus de
 - Loading, empty and error states. Pull to refresh and a Refresh button. A failed refresh keeps the list and shows a banner.
 - On return to the app: reloads when the data is older than one minute, retries after an error.
 
+The iOS app does the same, except date headers: it shows one flat list, so a window across midnight has no day header.
+It also has no Swift tests yet. The shared logic is tested on the iOS simulator.
+
+## KMP notes
+
+- The Swift side has no tests. `TimetableModel` repeats a few ViewModel rules (skip while loading, keep the list on a failed refresh).
+  This is the price of native UI without SKIE. Moving the state into `shared` is the next step if more screens come.
+- A cancelled Swift task is ignored, not shown as an error. The Kotlin coroutine is not cancelled with it, the answer is dropped.
+- The API key sits in the app bundle (`Info.plist`) on iOS and in `BuildConfig` on Android. Both are readable from the app.
+- Shared code runs off the main thread (`Dispatchers.Default`). The model only touches results on `@MainActor`.
+- Debugging Kotlin from Xcode is not set up. Use Android Studio for `shared`.
+- `shared` iOS tests read fixtures from the disk through an environment variable set by Gradle. They run via Gradle, not from Xcode.
+- The `HttpClient` is created once per `TimetableModel`. For more screens, hold it in one app-level object.
+
 ## Assumptions
 
 - The scheduled time is the departure time. A delay is shown next to it, the list is not re-sorted by it.
