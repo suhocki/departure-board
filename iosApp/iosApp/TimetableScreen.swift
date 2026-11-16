@@ -15,6 +15,9 @@ struct TimetableScreen: View {
                 .navigationBarTitleDisplayMode(.inline)
         }
         .task { await model.load() }
+        .onReceive(NotificationCenter.default.publisher(for: UIApplication.didBecomeActiveNotification)) { _ in
+            Task { await model.reloadIfStale() }
+        }
     }
 
     @ViewBuilder

@@ -18,6 +18,7 @@ final class TimetableModel: ObservableObject {
 
     private let loader: IosTimetableLoader
     private var isLoading = false
+    private var loadedAt = Date()
 
     init(apiKey: String) {
         loader = IosTimetableLoader(apiKey: apiKey)
@@ -39,6 +40,7 @@ final class TimetableModel: ObservableObject {
             if Task.isCancelled { return }
             if let success = result as? LoadResultSuccess<Timetable>, let timetable = success.value {
                 updatedAt = Date(timeIntervalSince1970: floor(started.timeIntervalSince1970 / 60) * 60)
+                loadedAt = Date()
                 state = .loaded(timetable)
             } else if let failure = result as? LoadResultFailure {
                 fail(failure.error, keeping: previous)
@@ -49,6 +51,13 @@ final class TimetableModel: ObservableObject {
             // The view went away or the refresh was cancelled: not an error for the user.
             if Task.isCancelled || error is CancellationError { return }
             fail(.unexpected, keeping: previous)
+        }
+    }
+
+    /// On return to the app: reload when the data is older than one minute, retry after an error.
+    func reloadIfStale() async {
+        if loadedTimetable == nil || refreshError != nil || Date().timeIntervalSince(loadedAt) > 60 {
+            await load()
         }
     }
 
