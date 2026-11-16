@@ -9,12 +9,8 @@ import com.sukhotski.timetable.domain.Station
 import com.sukhotski.timetable.domain.Timetable
 import com.sukhotski.timetable.domain.delayMinutes
 import com.sukhotski.timetable.domain.departureOrder
-import java.time.DateTimeException
-import java.time.Instant
-import java.time.OffsetDateTime
-import java.time.ZoneId
-import java.time.ZoneOffset
-import java.time.format.DateTimeParseException
+import kotlin.time.Instant
+import kotlinx.datetime.TimeZone
 
 private const val LATE = "LATE"
 private const val CANCELLED = "CANCELLED"
@@ -27,7 +23,7 @@ internal fun TimetableResponse.toTimetable(): Timetable? {
     return Timetable(
         station = Station(
             name = name,
-            zone = zone ?: ZoneOffset.UTC,
+            zone = zone ?: TimeZone.UTC,
             zoneIsFallback = zone == null,
         ),
         departures = rides
@@ -77,17 +73,17 @@ private fun DeviationDto?.toStatus(scheduled: Instant): DepartureStatus =
 private fun parseInstantOrNull(raw: String?): Instant? {
     if (raw == null) return null
     return try {
-        OffsetDateTime.parse(raw).toInstant()
-    } catch (_: DateTimeParseException) {
+        Instant.parse(raw)
+    } catch (_: IllegalArgumentException) {
         null
     }
 }
 
-private fun parseZoneOrNull(raw: String?): ZoneId? {
+private fun parseZoneOrNull(raw: String?): TimeZone? {
     if (raw.isNullOrBlank()) return null
     return try {
-        ZoneId.of(raw.trim())
-    } catch (_: DateTimeException) {
+        TimeZone.of(raw.trim())
+    } catch (_: IllegalArgumentException) {
         null
     }
 }

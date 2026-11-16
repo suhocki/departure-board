@@ -5,9 +5,9 @@ import android.provider.Settings
 import androidx.compose.ui.test.junit4.v2.createComposeRule
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
-import java.time.Instant
-import java.time.LocalDate
-import java.time.ZoneId
+import kotlin.time.Instant
+import kotlinx.datetime.LocalDate
+import kotlinx.datetime.TimeZone
 import org.junit.Assert.assertEquals
 import org.junit.Rule
 import org.junit.Test
@@ -22,9 +22,9 @@ class DeviceTimeFormatterTest {
     val composeRule = createComposeRule()
 
     private val context: Context = ApplicationProvider.getApplicationContext()
-    private val saturday = LocalDate.of(2026, 11, 14)
+    private val saturday = LocalDate(2026, 11, 14)
     private val departure = Instant.parse("2026-11-13T19:35:00Z")
-    private val berlin = ZoneId.of("Europe/Berlin")
+    private val berlin = TimeZone.of("Europe/Berlin")
 
     @Test
     @Config(qualifiers = "en-rUS")

@@ -13,27 +13,23 @@ import dagger.Module
 import dagger.Provides
 import dagger.hilt.components.SingletonComponent
 import dagger.hilt.testing.TestInstallIn
-import java.time.Clock
-import java.time.Duration
-import java.time.Instant
-import java.time.ZoneId
-import java.time.ZoneOffset
 import javax.inject.Singleton
+import kotlin.time.Clock
+import kotlin.time.Duration
+import kotlin.time.Duration.Companion.seconds
+import kotlin.time.Instant
+import kotlin.time.toJavaDuration
 import kotlinx.coroutines.CoroutineDispatcher
 import mockwebserver3.MockWebServer
 import okhttp3.OkHttpClient
 
 /** The clock the app reads in e2e tests. A test moves it to simulate time passing. */
-class TestClock(@Volatile private var now: Instant) : Clock() {
+class TestClock(@Volatile private var now: Instant) : Clock {
     fun advanceBy(duration: Duration) {
         now += duration
     }
 
-    override fun instant(): Instant = now
-
-    override fun getZone(): ZoneId = ZoneOffset.UTC
-
-    override fun withZone(zone: ZoneId): Clock = this
+    override fun now(): Instant = now
 }
 
 /**
@@ -63,7 +59,7 @@ object TestAppModule {
     @Singleton
     fun okHttpClient(): OkHttpClient = OkHttpClient.Builder()
         .addInterceptor(ApiKeyInterceptor("test-key"))
-        .callTimeout(Duration.ofSeconds(15))
+        .callTimeout(15.seconds.toJavaDuration())
         .build()
 
     @Provides

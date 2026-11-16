@@ -5,10 +5,10 @@ import com.sukhotski.timetable.domain.DepartureStatus
 import com.sukhotski.timetable.domain.LoadError
 import com.sukhotski.timetable.domain.Station
 import com.sukhotski.timetable.domain.Timetable
-import java.time.Duration
-import java.time.Instant
-import java.time.ZoneId
-import java.time.ZoneOffset
+import kotlin.time.Duration
+import kotlin.time.Duration.Companion.hours
+import kotlin.time.Instant
+import kotlinx.datetime.TimeZone
 
 /**
  * One data set for previews, UI tests and screenshots. Friday 2026-11-13, 23:05 in Berlin.
@@ -16,11 +16,11 @@ import java.time.ZoneOffset
  */
 object PreviewData {
     private val station =
-        Station("Berlin central bus station", ZoneId.of("Europe/Berlin"), zoneIsFallback = false)
+        Station("Berlin central bus station", TimeZone.of("Europe/Berlin"), zoneIsFallback = false)
 
     val updatedAt: Instant = at("22:05:00")
 
-    private val window: Duration = Duration.ofHours(2)
+    private val window: Duration = 2.hours
 
     val timetable = Timetable(
         station = station,
@@ -62,7 +62,7 @@ object PreviewData {
 
     val contentZoneUnknown = content.copy(
         timetable = timetable.copy(
-            station = station.copy(zone = ZoneOffset.UTC, zoneIsFallback = true),
+            station = station.copy(zone = TimeZone.UTC, zoneIsFallback = true),
         ),
     )
 

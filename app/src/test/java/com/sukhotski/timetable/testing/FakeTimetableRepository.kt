@@ -3,7 +3,7 @@ package com.sukhotski.timetable.testing
 import com.sukhotski.timetable.domain.LoadResult
 import com.sukhotski.timetable.domain.Timetable
 import com.sukhotski.timetable.domain.TimetableRepository
-import java.time.Instant
+import kotlin.time.Instant
 
 class FakeTimetableRepository : TimetableRepository {
     data class Call(val stationId: String, val from: Instant, val to: Instant)

@@ -7,7 +7,7 @@ import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
-import java.time.Clock
+import kotlin.time.Clock
 
 @Module
 @InstallIn(SingletonComponent::class)
@@ -19,6 +19,6 @@ abstract class DataModule {
     companion object {
         /** The only source of the current time in the app. */
         @Provides
-        fun clock(): Clock = Clock.systemUTC()
+        fun clock(): Clock = Clock.System
     }
 }

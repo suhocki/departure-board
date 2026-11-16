@@ -2,7 +2,7 @@ package com.sukhotski.timetable.testing
 
 import com.sukhotski.timetable.domain.Departure
 import com.sukhotski.timetable.domain.DepartureStatus
-import java.time.Instant
+import kotlin.time.Instant
 
 fun departure(
     id: String = "ride-1",

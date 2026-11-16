@@ -1,7 +1,9 @@
 package com.sukhotski.timetable.domain
 
 import com.sukhotski.timetable.testing.departure
-import java.time.Instant
+import kotlin.time.Duration.Companion.minutes
+import kotlin.time.Duration.Companion.seconds
+import kotlin.time.Instant
 import org.junit.Assert.assertEquals
 import org.junit.Test
 
@@ -34,9 +36,9 @@ class TimetableTest {
         val scheduled = at("2026-11-13T15:10:00Z")
 
         assertEquals(0, delayMinutes(scheduled, scheduled))
-        assertEquals(0, delayMinutes(scheduled, scheduled.plusSeconds(59)))
-        assertEquals(1, delayMinutes(scheduled, scheduled.plusSeconds(60)))
-        assertEquals(1, delayMinutes(scheduled, scheduled.plusSeconds(119)))
+        assertEquals(0, delayMinutes(scheduled, scheduled.plus(59.seconds)))
+        assertEquals(1, delayMinutes(scheduled, scheduled.plus(60.seconds)))
+        assertEquals(1, delayMinutes(scheduled, scheduled.plus(119.seconds)))
         assertEquals(74, delayMinutes(scheduled, at("2026-11-13T16:24:36Z")))
     }
 
@@ -44,7 +46,7 @@ class TimetableTest {
     fun `delay is never negative`() {
         val scheduled = at("2026-11-13T15:10:00Z")
 
-        assertEquals(0, delayMinutes(scheduled, scheduled.minusSeconds(5 * 60)))
+        assertEquals(0, delayMinutes(scheduled, scheduled.minus(5.minutes)))
     }
 
     private fun at(text: String): Instant = Instant.parse(text)

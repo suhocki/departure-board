@@ -6,9 +6,9 @@ import com.sukhotski.timetable.domain.Timetable
 import com.sukhotski.timetable.testing.departure
 import com.sukhotski.timetable.ui.timetable.TimetableItem.DateHeader
 import com.sukhotski.timetable.ui.timetable.TimetableItem.Ride
-import java.time.Instant
-import java.time.LocalDate
-import java.time.ZoneId
+import kotlin.time.Instant
+import kotlinx.datetime.LocalDate
+import kotlinx.datetime.TimeZone
 import org.junit.Assert.assertEquals
 import org.junit.Test
 
@@ -37,7 +37,7 @@ class TimetableItemsTest {
             )
 
         assertEquals(
-            listOf(Ride(lateEvening), DateHeader(LocalDate.of(2026, 11, 14)), Ride(afterMidnight)),
+            listOf(Ride(lateEvening), DateHeader(LocalDate(2026, 11, 14)), Ride(afterMidnight)),
             items,
         )
     }
@@ -53,9 +53,9 @@ class TimetableItemsTest {
 
         assertEquals(
             listOf(
-                DateHeader(LocalDate.of(2026, 11, 13)),
+                DateHeader(LocalDate(2026, 11, 13)),
                 Ride(yesterday),
-                DateHeader(LocalDate.of(2026, 11, 14)),
+                DateHeader(LocalDate(2026, 11, 14)),
                 Ride(today),
             ),
             items,
@@ -65,7 +65,7 @@ class TimetableItemsTest {
     @Test
     fun `today is taken in station zone`() {
         // 22:30 on Friday in New York, already Saturday in UTC, Berlin and the test JVM zone.
-        val newYork = ZoneId.of("America/New_York")
+        val newYork = TimeZone.of("America/New_York")
         val friday = ride("2026-11-14T04:30:00Z")
         val saturday = ride("2026-11-14T05:30:00Z")
 
@@ -76,7 +76,7 @@ class TimetableItemsTest {
             )
 
         assertEquals(
-            listOf(Ride(friday), DateHeader(LocalDate.of(2026, 11, 14)), Ride(saturday)),
+            listOf(Ride(friday), DateHeader(LocalDate(2026, 11, 14)), Ride(saturday)),
             items,
         )
     }
@@ -84,6 +84,6 @@ class TimetableItemsTest {
     private fun ride(scheduled: String) =
         departure(id = scheduled, scheduled = Instant.parse(scheduled))
 
-    private fun timetable(vararg rides: Departure, zone: ZoneId = ZoneId.of("Europe/Berlin")) =
+    private fun timetable(vararg rides: Departure, zone: TimeZone = TimeZone.of("Europe/Berlin")) =
         Timetable(Station("Station", zone, zoneIsFallback = false), rides.toList())
 }

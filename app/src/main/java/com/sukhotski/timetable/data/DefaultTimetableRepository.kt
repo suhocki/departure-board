@@ -7,9 +7,9 @@ import com.sukhotski.timetable.domain.LoadResult
 import com.sukhotski.timetable.domain.Timetable
 import com.sukhotski.timetable.domain.TimetableRepository
 import java.io.IOException
-import java.time.Instant
 import javax.inject.Inject
 import kotlin.coroutines.cancellation.CancellationException
+import kotlin.time.Instant
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.withContext
 import retrofit2.HttpException

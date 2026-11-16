@@ -7,9 +7,8 @@ import com.sukhotski.timetable.domain.DepartureStatus
 import com.sukhotski.timetable.domain.Timetable
 import com.sukhotski.timetable.testing.fixture
 import com.sukhotski.timetable.testing.ridesJson
-import java.time.Instant
-import java.time.ZoneId
-import java.time.ZoneOffset
+import kotlin.time.Instant
+import kotlinx.datetime.TimeZone
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNull
@@ -23,7 +22,7 @@ class TimetableMapperTest {
         val timetable = map(fixture("departures-normal.json"))
 
         assertEquals("Berlin central bus station", timetable.station.name)
-        assertEquals(ZoneId.of("Europe/Berlin"), timetable.station.zone)
+        assertEquals(TimeZone.of("Europe/Berlin"), timetable.station.zone)
         assertEquals(
             listOf("060", "1324", "N160", "144", "N1338", "N1385") +
                 listOf("050", "1327", "N1326", "N260", "1926"),
@@ -187,7 +186,7 @@ class TimetableMapperTest {
                     """{"rides":[$GOOD_RIDE],"station":{"name":"Berlin central bus station","timezone":$timezone}}""",
                 )
 
-            assertEquals(timezone, ZoneOffset.UTC, timetable.station.zone)
+            assertEquals(timezone, TimeZone.UTC, timetable.station.zone)
             assertTrue(timezone, timetable.station.zoneIsFallback)
             assertEquals(timezone, 1, timetable.departures.size)
         }
@@ -196,7 +195,7 @@ class TimetableMapperTest {
                 """{"rides":[],"station":{"name":"Berlin central bus station","timezone":" Europe/Berlin "}}""",
             )
 
-        assertEquals(ZoneId.of("Europe/Berlin"), padded.station.zone)
+        assertEquals(TimeZone.of("Europe/Berlin"), padded.station.zone)
         assertFalse(padded.station.zoneIsFallback)
     }
 

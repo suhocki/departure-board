@@ -13,10 +13,11 @@ import com.sukhotski.timetable.domain.Departure
 import com.sukhotski.timetable.domain.DepartureStatus
 import com.sukhotski.timetable.testing.departure
 import com.sukhotski.timetable.ui.theme.TimetableTheme
-import java.time.Duration
-import java.time.Instant
-import java.time.ZoneId
 import java.util.Locale
+import kotlin.time.Duration
+import kotlin.time.Duration.Companion.minutes
+import kotlin.time.Instant
+import kotlinx.datetime.TimeZone
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -28,7 +29,7 @@ class DepartureRowTest {
     val composeRule = createComposeRule()
 
     private val context: Context = ApplicationProvider.getApplicationContext()
-    private val zone = ZoneId.of("Europe/Berlin")
+    private val zone = TimeZone.of("Europe/Berlin")
     private val formatter = TimeFormatter(is24Hour = true, Locale.US)
 
     // 23:30 in Berlin, with the 53 character direction.
@@ -169,7 +170,7 @@ class DepartureRowTest {
         return departure(
             id = id,
             scheduled = scheduled,
-            status = DepartureStatus.Delayed(scheduled + Duration.ofMinutes(minutes)),
+            status = DepartureStatus.Delayed(scheduled + minutes.minutes),
         )
     }
 }

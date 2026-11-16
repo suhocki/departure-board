@@ -2,8 +2,8 @@ package com.sukhotski.timetable.ui.timetable
 
 import com.sukhotski.timetable.domain.LoadError
 import com.sukhotski.timetable.domain.Timetable
-import java.time.Duration
-import java.time.Instant
+import kotlin.time.Duration
+import kotlin.time.Instant
 
 sealed interface TimetableUiState {
     data object Loading : TimetableUiState

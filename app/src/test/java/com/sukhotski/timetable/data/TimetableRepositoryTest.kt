@@ -8,17 +8,20 @@ import com.sukhotski.timetable.domain.Timetable
 import com.sukhotski.timetable.testing.FakeErrorReporter
 import com.sukhotski.timetable.testing.fixture
 import com.sukhotski.timetable.testing.ridesJson
-import java.time.Duration
-import java.time.Instant
-import java.time.ZoneId
 import java.util.concurrent.TimeUnit
 import kotlin.coroutines.CoroutineContext
+import kotlin.time.Duration
+import kotlin.time.Duration.Companion.hours
+import kotlin.time.Duration.Companion.milliseconds
+import kotlin.time.Instant
+import kotlin.time.toJavaDuration
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.Runnable
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.runTest
+import kotlinx.datetime.TimeZone
 import mockwebserver3.MockResponse
 import mockwebserver3.MockWebServer
 import okhttp3.OkHttpClient
@@ -39,7 +42,7 @@ class TimetableRepositoryTest {
     private lateinit var repository: DefaultTimetableRepository
 
     private val from = Instant.parse("2026-11-13T16:05:00Z")
-    private val to = from + Duration.ofHours(2)
+    private val to = from + 2.hours
 
     @Before
     fun setUp() {
@@ -79,7 +82,7 @@ class TimetableRepositoryTest {
 
         assertEquals(11, timetable.departures.size)
         assertEquals("060", timetable.departures.first().lineCode)
-        assertEquals(ZoneId.of("Europe/Berlin"), timetable.station.zone)
+        assertEquals(TimeZone.of("Europe/Berlin"), timetable.station.zone)
     }
 
     @Test
@@ -170,7 +173,7 @@ class TimetableRepositoryTest {
                 .throttleBody(1, 1, TimeUnit.SECONDS)
                 .build(),
         )
-        val client = OkHttpClient.Builder().callTimeout(Duration.ofMillis(200)).build()
+        val client = OkHttpClient.Builder().callTimeout(200.milliseconds.toJavaDuration()).build()
         val slowRepository =
             DefaultTimetableRepository(
                 createTimetableApi(server.url("/"), client),

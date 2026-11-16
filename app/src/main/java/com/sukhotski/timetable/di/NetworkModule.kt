@@ -8,15 +8,17 @@ import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
-import java.time.Duration
 import javax.inject.Singleton
+import kotlin.time.Duration
+import kotlin.time.Duration.Companion.seconds
+import kotlin.time.toJavaDuration
 import okhttp3.HttpUrl.Companion.toHttpUrl
 import okhttp3.OkHttpClient
 
 private const val BASE_URL = "https://global.api.flixbus.com/"
 
 /** OkHttp limits each phase to 10 s but not the whole call. A slow body would hold the spinner. */
-internal val CALL_TIMEOUT: Duration = Duration.ofSeconds(15)
+internal val CALL_TIMEOUT: Duration = 15.seconds
 
 @Module
 @InstallIn(SingletonComponent::class)
@@ -26,7 +28,7 @@ object NetworkModule {
     @Singleton
     fun okHttpClient(): OkHttpClient = OkHttpClient.Builder()
         .addInterceptor(ApiKeyInterceptor(BuildConfig.TIMETABLE_API_KEY))
-        .callTimeout(CALL_TIMEOUT)
+        .callTimeout(CALL_TIMEOUT.toJavaDuration())
         .build()
 
     @Provides

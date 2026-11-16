@@ -13,7 +13,8 @@ import androidx.compose.ui.test.performTouchInput
 import androidx.compose.ui.test.swipeDown
 import androidx.lifecycle.Lifecycle
 import dagger.hilt.android.testing.HiltAndroidTest
-import java.time.Duration
+import kotlin.time.Duration
+import kotlin.time.Duration.Companion.seconds
 import org.junit.Assert.assertEquals
 import org.junit.Rule
 import org.junit.Test
@@ -92,13 +93,13 @@ class TimetableE2eTest {
 
         // A short trip to the background keeps the data.
         scenario.moveToState(Lifecycle.State.CREATED)
-        e2e.clock.advanceBy(Duration.ofSeconds(30))
+        e2e.clock.advanceBy(30.seconds)
         scenario.moveToState(Lifecycle.State.RESUMED)
         e2e.compose.waitForIdle()
         assertEquals(1, e2e.server.requestCount)
 
         scenario.moveToState(Lifecycle.State.CREATED)
-        e2e.clock.advanceBy(Duration.ofSeconds(31))
+        e2e.clock.advanceBy(31.seconds)
         e2e.enqueueFixture("departures-cancelled.json")
         scenario.moveToState(Lifecycle.State.RESUMED)
 

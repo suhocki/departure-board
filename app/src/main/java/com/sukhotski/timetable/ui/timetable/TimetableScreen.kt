@@ -38,8 +38,9 @@ import androidx.compose.ui.unit.dp
 import com.sukhotski.timetable.R
 import com.sukhotski.timetable.domain.Station
 import com.sukhotski.timetable.ui.theme.TimetableTheme
-import java.time.Instant
 import java.util.Locale
+import kotlin.time.Instant
+import kotlinx.datetime.offsetAt
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -120,7 +121,7 @@ private fun LoadedContent(
     modifier: Modifier = Modifier,
 ) {
     val station = state.timetable.station
-    val hours = state.window.toHours().toInt()
+    val hours = state.window.inWholeHours.toInt()
     Column(modifier) {
         state.refreshError?.let {
             RefreshErrorBanner(it, dataTime = formatter.time(state.updatedAt, station.zone))
@@ -168,7 +169,7 @@ private fun LoadedContent(
 
 private val TimetableItem.key: String
     get() = when (this) {
-        is TimetableItem.DateHeader -> "date:${date.toEpochDay()}"
+        is TimetableItem.DateHeader -> "date:${date.toEpochDays()}"
         is TimetableItem.Ride -> "ride:${departure.id}"
     }
 
@@ -189,7 +190,7 @@ private fun StationHeader(
             hours,
             hours,
             from,
-            formatUtcOffset(station.zone.rules.getOffset(updatedAt)),
+            formatUtcOffset(station.zone.offsetAt(updatedAt)),
         )
     }
     Column(

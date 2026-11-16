@@ -42,7 +42,7 @@ class NetworkModuleTest {
     @Test
     fun `real client limits the whole call`() {
         assertEquals(
-            CALL_TIMEOUT.toMillis().toInt(),
+            CALL_TIMEOUT.inWholeMilliseconds.toInt(),
             NetworkModule.okHttpClient().callTimeoutMillis,
         )
     }

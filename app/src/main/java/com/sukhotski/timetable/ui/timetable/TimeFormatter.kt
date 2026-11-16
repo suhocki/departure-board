@@ -1,12 +1,15 @@
 package com.sukhotski.timetable.ui.timetable
 
-import java.time.Instant
-import java.time.LocalDate
-import java.time.ZoneId
-import java.time.ZoneOffset
 import java.time.format.DateTimeFormatter
 import java.util.Locale
 import kotlin.math.abs
+import kotlin.time.Instant
+import kotlin.time.toJavaInstant
+import kotlinx.datetime.LocalDate
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.UtcOffset
+import kotlinx.datetime.toJavaLocalDate
+import kotlinx.datetime.toJavaZoneId
 
 /**
  * Explicit time patterns, not localized styles: they follow the device 12/24 hour switch
@@ -20,13 +23,14 @@ class TimeFormatter(is24Hour: Boolean, locale: Locale, datePattern: String = "EE
     )
     private val dateFormat = DateTimeFormatter.ofPattern(datePattern, locale)
 
-    fun time(instant: Instant, zone: ZoneId): String = timeFormat.format(instant.atZone(zone))
+    fun time(instant: Instant, zone: TimeZone): String =
+        timeFormat.format(instant.toJavaInstant().atZone(zone.toJavaZoneId()))
 
-    fun date(date: LocalDate): String = dateFormat.format(date)
+    fun date(date: LocalDate): String = dateFormat.format(date.toJavaLocalDate())
 }
 
 /** "UTC+1", "UTC+5:30", "UTC-5" or "UTC". Zone names like CET differ between platforms and locales. */
-fun formatUtcOffset(offset: ZoneOffset): String {
+fun formatUtcOffset(offset: UtcOffset): String {
     val totalMinutes = offset.totalSeconds / 60
     if (totalMinutes == 0) return "UTC"
     val sign = if (totalMinutes > 0) "+" else "-"

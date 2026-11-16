@@ -5,11 +5,12 @@ import androidx.lifecycle.viewModelScope
 import com.sukhotski.timetable.domain.LoadResult
 import com.sukhotski.timetable.domain.TimetableRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
-import java.time.Clock
-import java.time.Duration
-import java.time.Instant
-import java.time.temporal.ChronoUnit
 import javax.inject.Inject
+import kotlin.time.Clock
+import kotlin.time.Duration
+import kotlin.time.Duration.Companion.hours
+import kotlin.time.Duration.Companion.minutes
+import kotlin.time.Instant
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -28,7 +29,7 @@ class TimetableViewModel @Inject constructor(
     private var loadJob: Job? = null
 
     /** When the list on screen was loaded, to the second. updatedAt is cut to the minute. */
-    private var loadedAt: Instant = Instant.EPOCH
+    private var loadedAt: Instant = Instant.fromEpochSeconds(0)
 
     init {
         load()
@@ -50,7 +51,7 @@ class TimetableViewModel @Inject constructor(
             is TimetableUiState.Error -> load()
 
             is TimetableUiState.Loaded ->
-                if (Duration.between(loadedAt, clock.instant()) > STALE_AFTER) load()
+                if (clock.now() - loadedAt > STALE_AFTER) load()
         }
     }
 
@@ -60,8 +61,8 @@ class TimetableViewModel @Inject constructor(
         _state.value =
             previous?.copy(isRefreshing = true, refreshError = null) ?: TimetableUiState.Loading
         loadJob = viewModelScope.launch {
-            val startedAt = clock.instant()
-            val now = startedAt.truncatedTo(ChronoUnit.MINUTES)
+            val startedAt = clock.now()
+            val now = Instant.fromEpochSeconds(startedAt.epochSeconds / 60 * 60)
             _state.value =
                 when (val result = repository.departures(STATION_ID, now, now + WINDOW)) {
                     is LoadResult.Success -> {
@@ -79,7 +80,7 @@ class TimetableViewModel @Inject constructor(
     companion object {
         /** Berlin central bus station. */
         const val STATION_ID = "dcbaaee6-9603-11e6-9066-549f350fcb0c"
-        val WINDOW: Duration = Duration.ofHours(2)
-        val STALE_AFTER: Duration = Duration.ofMinutes(1)
+        val WINDOW: Duration = 2.hours
+        val STALE_AFTER: Duration = 1.minutes
     }
 }

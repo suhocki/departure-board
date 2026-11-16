@@ -1,17 +1,19 @@
 package com.sukhotski.timetable.ui.timetable
 
-import java.time.Instant
-import java.time.LocalDate
-import java.time.ZoneId
 import java.time.ZoneOffset
 import java.util.Locale
+import kotlin.time.Instant
+import kotlinx.datetime.LocalDate
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.UtcOffset
+import kotlinx.datetime.offsetAt
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotEquals
 import org.junit.Test
 
 class TimeFormatterTest {
 
-    private val berlin = ZoneId.of("Europe/Berlin")
+    private val berlin = TimeZone.of("Europe/Berlin")
     private val formatter24 = TimeFormatter(is24Hour = true, Locale.US)
     private val formatter12 = TimeFormatter(is24Hour = false, Locale.US)
 
@@ -20,8 +22,8 @@ class TimeFormatterTest {
         val instant = Instant.parse("2026-11-13T16:20:00Z")
         // The test JVM runs in Asia/Kolkata, so reading the device zone would give 21:50.
         assertNotEquals(
-            berlin.rules.getOffset(instant),
-            ZoneId.systemDefault().rules.getOffset(instant),
+            berlin.offsetAt(instant),
+            TimeZone.currentSystemDefault().offsetAt(instant),
         )
 
         assertEquals("17:20", formatter24.time(instant, berlin))
@@ -65,22 +67,22 @@ class TimeFormatterTest {
 
     @Test
     fun `formats date header`() {
-        assertEquals("Saturday, November 14", formatter24.date(LocalDate.of(2026, 11, 14)))
-        assertEquals("Friday, November 13", formatter24.date(LocalDate.of(2026, 11, 13)))
+        assertEquals("Saturday, November 14", formatter24.date(LocalDate(2026, 11, 14)))
+        assertEquals("Friday, November 13", formatter24.date(LocalDate(2026, 11, 13)))
     }
 
     @Test
     fun `formats date header with the given pattern`() {
         val german = TimeFormatter(is24Hour = true, Locale.GERMANY, datePattern = "EEEE, d. MMMM")
 
-        assertEquals("Samstag, 14. November", german.date(LocalDate.of(2026, 11, 14)))
+        assertEquals("Samstag, 14. November", german.date(LocalDate(2026, 11, 14)))
     }
 
     @Test
     fun `formats utc offset`() {
-        assertEquals("UTC+1", formatUtcOffset(ZoneOffset.ofHours(1)))
-        assertEquals("UTC+5:30", formatUtcOffset(ZoneOffset.ofHoursMinutes(5, 30)))
-        assertEquals("UTC-5", formatUtcOffset(ZoneOffset.ofHours(-5)))
-        assertEquals("UTC", formatUtcOffset(ZoneOffset.UTC))
+        assertEquals("UTC+1", formatUtcOffset(UtcOffset(hours = 1)))
+        assertEquals("UTC+5:30", formatUtcOffset(UtcOffset(5, 30)))
+        assertEquals("UTC-5", formatUtcOffset(UtcOffset(hours = -5)))
+        assertEquals("UTC", formatUtcOffset(UtcOffset.ZERO))
     }
 }

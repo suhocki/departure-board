@@ -9,12 +9,16 @@ import com.sukhotski.timetable.testing.FakeTimetableRepository
 import com.sukhotski.timetable.testing.MainDispatcherRule
 import com.sukhotski.timetable.testing.MutableClock
 import com.sukhotski.timetable.testing.departure
-import java.time.Duration
-import java.time.Instant
-import java.time.ZoneId
+import kotlin.time.Duration
+import kotlin.time.Duration.Companion.hours
+import kotlin.time.Duration.Companion.milliseconds
+import kotlin.time.Duration.Companion.minutes
+import kotlin.time.Duration.Companion.seconds
+import kotlin.time.Instant
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.runTest
+import kotlinx.datetime.TimeZone
 import org.junit.Assert.assertEquals
 import org.junit.Rule
 import org.junit.Test
@@ -30,7 +34,7 @@ class TimetableViewModelTest {
     private val repository = FakeTimetableRepository()
 
     private val station =
-        Station("Berlin central bus station", ZoneId.of("Europe/Berlin"), zoneIsFallback = false)
+        Station("Berlin central bus station", TimeZone.of("Europe/Berlin"), zoneIsFallback = false)
     private val timetable = Timetable(station, listOf(departure(id = "first")))
     private val newerTimetable = Timetable(station, listOf(departure(id = "second")))
 
@@ -77,7 +81,7 @@ class TimetableViewModelTest {
 
     @Test
     fun `asks for a two hour window from the current minute`() = runTest {
-        clock.advanceBy(Duration.ofSeconds(32).plusMillis(485))
+        clock.advanceBy(32.seconds + 485.milliseconds)
         repository.results += LoadResult.Success(timetable)
         createViewModel()
 
@@ -133,16 +137,16 @@ class TimetableViewModelTest {
         val viewModel = createViewModel()
         advanceUntilIdle()
 
-        clock.advanceBy(Duration.ofMinutes(10))
+        clock.advanceBy(10.minutes)
         viewModel.refresh()
         advanceUntilIdle()
 
-        val later = start + Duration.ofMinutes(10)
+        val later = start + 10.minutes
         assertEquals(
             FakeTimetableRepository.Call(
                 TimetableViewModel.STATION_ID,
                 later,
-                later + Duration.ofHours(2),
+                later + 2.hours,
             ),
             repository.calls.last(),
         )
@@ -173,7 +177,7 @@ class TimetableViewModelTest {
         val viewModel = createViewModel()
         advanceUntilIdle()
 
-        clock.advanceBy(Duration.ofMinutes(10))
+        clock.advanceBy(10.minutes)
         viewModel.refresh()
         advanceUntilIdle()
 
@@ -216,12 +220,12 @@ class TimetableViewModelTest {
         val viewModel = createViewModel()
         advanceUntilIdle()
 
-        clock.advanceBy(Duration.ofSeconds(61))
+        clock.advanceBy(61.seconds)
         viewModel.refreshIfStale()
         advanceUntilIdle()
 
         assertEquals(2, repository.calls.size)
-        assertEquals(start + Duration.ofMinutes(1), repository.calls.last().from)
+        assertEquals(start + 1.minutes, repository.calls.last().from)
     }
 
     @Test
@@ -229,7 +233,7 @@ class TimetableViewModelTest {
         repository.results += LoadResult.Success(timetable)
         val viewModel = createViewModel()
         advanceUntilIdle()
-        clock.advanceBy(Duration.ofSeconds(59))
+        clock.advanceBy(59.seconds)
 
         viewModel.refreshIfStale()
         advanceUntilIdle()
@@ -241,17 +245,17 @@ class TimetableViewModelTest {
     fun `stale check uses the load time, not the window start`() = runTest {
         repository.results += LoadResult.Success(timetable)
         repository.results += LoadResult.Success(newerTimetable)
-        clock.advanceBy(Duration.ofSeconds(59))
+        clock.advanceBy(59.seconds)
         val viewModel = createViewModel()
         advanceUntilIdle()
 
-        clock.advanceBy(Duration.ofSeconds(3))
+        clock.advanceBy(3.seconds)
         viewModel.refreshIfStale()
         advanceUntilIdle()
 
         assertEquals(1, repository.calls.size)
 
-        clock.advanceBy(Duration.ofSeconds(58))
+        clock.advanceBy(58.seconds)
         viewModel.refreshIfStale()
         advanceUntilIdle()
 

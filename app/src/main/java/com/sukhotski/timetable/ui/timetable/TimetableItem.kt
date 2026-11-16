@@ -2,8 +2,9 @@ package com.sukhotski.timetable.ui.timetable
 
 import com.sukhotski.timetable.domain.Departure
 import com.sukhotski.timetable.domain.Timetable
-import java.time.Instant
-import java.time.LocalDate
+import kotlin.time.Instant
+import kotlinx.datetime.LocalDate
+import kotlinx.datetime.toLocalDateTime
 
 sealed interface TimetableItem {
     data class DateHeader(val date: LocalDate) : TimetableItem
@@ -17,10 +18,10 @@ sealed interface TimetableItem {
  */
 fun timetableItems(timetable: Timetable, now: Instant): List<TimetableItem> {
     val zone = timetable.station.zone
-    var previousDate = now.atZone(zone).toLocalDate()
+    var previousDate = now.toLocalDateTime(zone).date
     return buildList {
         for (departure in timetable.departures) {
-            val date = departure.scheduled.atZone(zone).toLocalDate()
+            val date = departure.scheduled.toLocalDateTime(zone).date
             if (date != previousDate) {
                 add(TimetableItem.DateHeader(date))
                 previousDate = date

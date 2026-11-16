@@ -1,6 +1,6 @@
 package com.sukhotski.timetable.domain
 
-import java.time.Instant
+import kotlin.time.Instant
 
 interface TimetableRepository {
     suspend fun departures(stationId: String, from: Instant, to: Instant): LoadResult<Timetable>

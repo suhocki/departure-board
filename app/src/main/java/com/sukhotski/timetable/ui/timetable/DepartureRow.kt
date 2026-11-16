@@ -23,8 +23,8 @@ import com.sukhotski.timetable.domain.Departure
 import com.sukhotski.timetable.domain.DepartureStatus
 import com.sukhotski.timetable.domain.delayMinutes
 import com.sukhotski.timetable.ui.theme.TimetableTheme
-import java.time.ZoneId
 import java.util.Locale
+import kotlinx.datetime.TimeZone
 
 /** Above this delay the row shows the expected clock time instead of minutes. */
 private const val EXPECTED_TIME_THRESHOLD_MINUTES = 30
@@ -34,7 +34,7 @@ private val STATUS_MAX_WIDTH = 120.dp
 @Composable
 fun DepartureRow(
     departure: Departure,
-    zone: ZoneId,
+    zone: TimeZone,
     formatter: TimeFormatter,
     modifier: Modifier = Modifier,
 ) {
@@ -76,7 +76,7 @@ fun DepartureRow(
 }
 
 @Composable
-private fun statusText(departure: Departure, zone: ZoneId, formatter: TimeFormatter): String? =
+private fun statusText(departure: Departure, zone: TimeZone, formatter: TimeFormatter): String? =
     when (val status = departure.status) {
         DepartureStatus.Scheduled -> null
 
@@ -96,7 +96,7 @@ private fun statusText(departure: Departure, zone: ZoneId, formatter: TimeFormat
 private fun departureDescription(
     departure: Departure,
     scheduledTime: String,
-    zone: ZoneId,
+    zone: TimeZone,
     formatter: TimeFormatter,
 ): String = when (val status = departure.status) {
     DepartureStatus.Scheduled ->

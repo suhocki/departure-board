@@ -5,7 +5,7 @@ import androidx.compose.ui.test.junit4.v2.createEmptyComposeRule
 import androidx.test.core.app.ActivityScenario
 import com.sukhotski.timetable.MainActivity
 import dagger.hilt.android.testing.HiltAndroidRule
-import java.time.Instant
+import kotlin.time.Instant
 import mockwebserver3.MockResponse
 import mockwebserver3.MockWebServer
 import mockwebserver3.SocketEffect
