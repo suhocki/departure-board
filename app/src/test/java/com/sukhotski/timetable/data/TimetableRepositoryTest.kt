@@ -1,41 +1,49 @@
 package com.sukhotski.timetable.data
 
-import com.sukhotski.timetable.data.remote.ApiKeyInterceptor
-import com.sukhotski.timetable.data.remote.createTimetableApi
+import com.sukhotski.timetable.data.remote.TimetableApi
+import com.sukhotski.timetable.data.remote.createTimetableHttpClient
 import com.sukhotski.timetable.domain.LoadError
 import com.sukhotski.timetable.domain.LoadResult
 import com.sukhotski.timetable.domain.Timetable
 import com.sukhotski.timetable.testing.FakeErrorReporter
 import com.sukhotski.timetable.testing.fixture
 import com.sukhotski.timetable.testing.ridesJson
-import java.util.concurrent.TimeUnit
+import io.ktor.client.engine.mock.MockEngine
+import io.ktor.client.engine.mock.MockRequestHandleScope
+import io.ktor.client.engine.mock.respond
+import io.ktor.client.engine.mock.respondError
+import io.ktor.client.request.HttpRequestData
+import io.ktor.client.request.HttpResponseData
+import io.ktor.http.HttpHeaders
+import io.ktor.http.HttpStatusCode
+import io.ktor.http.headersOf
 import kotlin.coroutines.CoroutineContext
-import kotlin.time.Duration
 import kotlin.time.Duration.Companion.hours
 import kotlin.time.Duration.Companion.milliseconds
+import kotlin.time.Duration.Companion.seconds
 import kotlin.time.Instant
-import kotlin.time.toJavaDuration
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.Runnable
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.runTest
 import kotlinx.datetime.TimeZone
-import mockwebserver3.MockResponse
-import mockwebserver3.MockWebServer
-import okhttp3.OkHttpClient
-import org.junit.After
+import kotlinx.io.IOException
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
 
+private typealias Responder = suspend MockRequestHandleScope.(HttpRequestData) -> HttpResponseData
+
 class TimetableRepositoryTest {
 
-    private val server = MockWebServer()
     private val reporter = FakeErrorReporter()
+    private val requests = mutableListOf<HttpRequestData>()
+    private val responses = ArrayDeque<Responder>()
 
     @OptIn(ExperimentalCoroutinesApi::class)
     private val mapping = UnconfinedTestDispatcher()
@@ -46,19 +54,7 @@ class TimetableRepositoryTest {
 
     @Before
     fun setUp() {
-        server.start()
-        val client = OkHttpClient.Builder().addInterceptor(ApiKeyInterceptor("test-key")).build()
-        repository =
-            DefaultTimetableRepository(
-                createTimetableApi(server.url("/"), client),
-                reporter,
-                mapping,
-            )
-    }
-
-    @After
-    fun tearDown() {
-        server.close()
+        repository = repositoryWith(mapping)
     }
 
     @Test
@@ -67,11 +63,11 @@ class TimetableRepositoryTest {
 
         repository.departures("station-1", from, to)
 
-        val url = server.takeRequest().url
+        val url = requests.single().url
         assertEquals("/gis/v2/timetable/station-1/departures", url.encodedPath)
-        assertEquals("2026-11-13T16:05:00Z", url.queryParameter("from"))
-        assertEquals("2026-11-13T18:05:00Z", url.queryParameter("to"))
-        assertEquals("test-key", url.queryParameter("apiKey"))
+        assertEquals("2026-11-13T16:05:00Z", url.parameters["from"])
+        assertEquals("2026-11-13T18:05:00Z", url.parameters["to"])
+        assertEquals("test-key", url.parameters["apiKey"])
     }
 
     @Test
@@ -147,7 +143,7 @@ class TimetableRepositoryTest {
 
     @Test
     fun `maps 204 without body to unexpected`() = runTest {
-        server.enqueue(MockResponse.Builder().code(204).build())
+        responses += { respondError(HttpStatusCode.NoContent) }
 
         assertEquals(
             LoadResult.Failure(LoadError.Unexpected),
@@ -157,7 +153,7 @@ class TimetableRepositoryTest {
 
     @Test
     fun `maps connection failure to no connection`() = runTest {
-        server.close()
+        responses += { throw IOException("down") }
 
         assertEquals(
             LoadResult.Failure(LoadError.NoConnection),
@@ -166,20 +162,12 @@ class TimetableRepositoryTest {
     }
 
     @Test
-    fun `maps call timeout on a slow body to no connection`() = runTest {
-        server.enqueue(
-            MockResponse.Builder()
-                .body(fixture("departures-full.json"))
-                .throttleBody(1, 1, TimeUnit.SECONDS)
-                .build(),
-        )
-        val client = OkHttpClient.Builder().callTimeout(200.milliseconds.toJavaDuration()).build()
-        val slowRepository =
-            DefaultTimetableRepository(
-                createTimetableApi(server.url("/"), client),
-                reporter,
-                mapping,
-            )
+    fun `maps request timeout to no connection`() = runTest {
+        responses += {
+            delay(10.seconds)
+            respond("")
+        }
+        val slowRepository = repositoryWith(mapping, timeout = 100.milliseconds)
 
         val result = slowRepository.departures("station-1", from, to)
 
@@ -217,8 +205,8 @@ class TimetableRepositoryTest {
     @Test
     fun `reports nothing for a clean response or a connection failure`() = runTest {
         enqueue(200, fixture("departures-normal.json"))
+        responses += { throw IOException("down") }
         repository.departures("station-1", from, to)
-        server.close()
         repository.departures("station-1", from, to)
 
         assertTrue(reporter.dropped.isEmpty())
@@ -236,20 +224,14 @@ class TimetableRepositoryTest {
         assertEquals(3, reporter.errors.size)
         for (error in reporter.errors) {
             val text = error.stackTraceToString()
-            assertFalse(text, "test-key" in text || server.hostName in text)
+            assertFalse(text, "test-key" in text || TEST_HOST in text)
         }
     }
 
     @Test
     fun `maps the response on the injected dispatcher`() = runTest {
         val dispatcher = CountingDispatcher()
-        val client = OkHttpClient.Builder().build()
-        val repository =
-            DefaultTimetableRepository(
-                createTimetableApi(server.url("/"), client),
-                reporter,
-                dispatcher,
-            )
+        val repository = repositoryWith(dispatcher)
         enqueue(200, fixture("departures-normal.json"))
 
         success(repository.departures("station-1", from, to))
@@ -257,14 +239,26 @@ class TimetableRepositoryTest {
         assertEquals(1, dispatcher.dispatches)
     }
 
+    private fun repositoryWith(
+        dispatcher: CoroutineDispatcher,
+        timeout: kotlin.time.Duration = 15.seconds,
+    ): DefaultTimetableRepository {
+        val engine = MockEngine { request ->
+            requests += request
+            responses.removeFirst()(request)
+        }
+        val client = createTimetableHttpClient(engine, "https://$TEST_HOST/", timeout)
+        return DefaultTimetableRepository(TimetableApi(client, "test-key"), reporter, dispatcher)
+    }
+
     private fun enqueue(code: Int, body: String, contentType: String = "application/json") {
-        server.enqueue(
-            MockResponse.Builder()
-                .code(code)
-                .setHeader("Content-Type", contentType)
-                .body(body)
-                .build(),
-        )
+        responses += {
+            respond(
+                content = body,
+                status = HttpStatusCode.fromValue(code),
+                headers = headersOf(HttpHeaders.ContentType, contentType),
+            )
+        }
     }
 
     private fun success(result: LoadResult<Timetable>): Timetable {
@@ -281,5 +275,9 @@ class TimetableRepositoryTest {
             dispatches++
             Dispatchers.Default.dispatch(context, block)
         }
+    }
+
+    private companion object {
+        const val TEST_HOST = "timetable.test"
     }
 }

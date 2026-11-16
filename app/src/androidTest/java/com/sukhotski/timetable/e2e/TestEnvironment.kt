@@ -2,9 +2,8 @@ package com.sukhotski.timetable.e2e
 
 import com.sukhotski.timetable.data.DefaultTimetableRepository
 import com.sukhotski.timetable.data.ErrorReporter
-import com.sukhotski.timetable.data.remote.ApiKeyInterceptor
 import com.sukhotski.timetable.data.remote.TimetableApi
-import com.sukhotski.timetable.data.remote.createTimetableApi
+import com.sukhotski.timetable.data.remote.createTimetableHttpClient
 import com.sukhotski.timetable.di.DataModule
 import com.sukhotski.timetable.di.DefaultDispatcher
 import com.sukhotski.timetable.di.NetworkModule
@@ -13,15 +12,14 @@ import dagger.Module
 import dagger.Provides
 import dagger.hilt.components.SingletonComponent
 import dagger.hilt.testing.TestInstallIn
+import io.ktor.client.HttpClient
+import io.ktor.client.engine.okhttp.OkHttp
 import javax.inject.Singleton
 import kotlin.time.Clock
 import kotlin.time.Duration
-import kotlin.time.Duration.Companion.seconds
 import kotlin.time.Instant
-import kotlin.time.toJavaDuration
 import kotlinx.coroutines.CoroutineDispatcher
 import mockwebserver3.MockWebServer
-import okhttp3.OkHttpClient
 
 /** The clock the app reads in e2e tests. A test moves it to simulate time passing. */
 class TestClock(@Volatile private var now: Instant) : Clock {
@@ -42,11 +40,10 @@ object TestEnvironment {
 }
 
 /**
- * Replaces all of NetworkModule and DataModule. The OkHttpClient is built again here with the
- * production key interceptor and the same 15 s call timeout, so an interceptor added to
- * NetworkModule is not seen here. Retrofit points at the mock server, the clock is the test clock,
- * and the repository binding is redone with the production class. The ViewModel, ErrorReporter
- * and dispatcher are the production ones.
+ * Replaces all of NetworkModule and DataModule. The HttpClient is built again here with the
+ * production factory, so a plugin added to NetworkModule is not seen here. It points at the
+ * mock server, the clock is the test clock, and the repository binding is redone with the
+ * production class. The ViewModel, ErrorReporter and dispatcher are the production ones.
  */
 @Module
 @TestInstallIn(
@@ -57,15 +54,14 @@ object TestAppModule {
 
     @Provides
     @Singleton
-    fun okHttpClient(): OkHttpClient = OkHttpClient.Builder()
-        .addInterceptor(ApiKeyInterceptor("test-key"))
-        .callTimeout(15.seconds.toJavaDuration())
-        .build()
+    fun httpClient(): HttpClient = createTimetableHttpClient(
+        OkHttp.create(),
+        baseUrl = TestEnvironment.server.url("/").toString(),
+    )
 
     @Provides
     @Singleton
-    fun timetableApi(client: OkHttpClient): TimetableApi =
-        createTimetableApi(TestEnvironment.server.url("/"), client)
+    fun timetableApi(client: HttpClient): TimetableApi = TimetableApi(client, "test-key")
 
     @Provides
     fun clock(): Clock = TestEnvironment.clock

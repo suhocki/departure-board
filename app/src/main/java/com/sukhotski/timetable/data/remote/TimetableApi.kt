@@ -1,27 +1,28 @@
 package com.sukhotski.timetable.data.remote
 
-import okhttp3.HttpUrl
-import okhttp3.MediaType.Companion.toMediaType
-import okhttp3.OkHttpClient
-import retrofit2.Retrofit
-import retrofit2.converter.kotlinx.serialization.asConverterFactory
-import retrofit2.http.GET
-import retrofit2.http.Path
-import retrofit2.http.Query
+import com.sukhotski.timetable.data.UnexpectedResponseException
+import io.ktor.client.HttpClient
+import io.ktor.client.request.get
+import io.ktor.client.request.parameter
+import io.ktor.client.statement.bodyAsText
+import io.ktor.http.isSuccess
 
-interface TimetableApi {
-    /** [from] and [to] are ISO 8601 instants in UTC with Z. The API ignores other offsets. */
-    @GET("gis/v2/timetable/{stationId}/departures")
-    suspend fun departures(
-        @Path("stationId") stationId: String,
-        @Query("from") from: String,
-        @Query("to") to: String,
-    ): TimetableResponse
+class TimetableApi(private val client: HttpClient, private val apiKey: String) {
+
+    /**
+     * The response body as text, so the caller can decode it on its own dispatcher.
+     * [from] and [to] are ISO 8601 instants in UTC with Z. The API ignores other offsets.
+     * Error bodies are never read. Throws [UnexpectedResponseException] for a non-2xx status.
+     */
+    suspend fun departures(stationId: String, from: String, to: String): String {
+        val response = client.get("gis/v2/timetable/$stationId/departures") {
+            parameter("from", from)
+            parameter("to", to)
+            parameter("apiKey", apiKey)
+        }
+        if (!response.status.isSuccess()) {
+            throw UnexpectedResponseException("HTTP ${response.status.value}")
+        }
+        return response.bodyAsText()
+    }
 }
-
-fun createTimetableApi(baseUrl: HttpUrl, client: OkHttpClient): TimetableApi = Retrofit.Builder()
-    .baseUrl(baseUrl)
-    .client(client)
-    .addConverterFactory(timetableJson.asConverterFactory("application/json".toMediaType()))
-    .build()
-    .create(TimetableApi::class.java)
