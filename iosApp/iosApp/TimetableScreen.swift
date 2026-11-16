@@ -2,13 +2,33 @@ import Shared
 import SwiftUI
 
 struct TimetableScreen: View {
-    let apiKey: String
+    @StateObject private var model: TimetableModel
+
+    init(apiKey: String) {
+        _model = StateObject(wrappedValue: TimetableModel(apiKey: apiKey))
+    }
 
     var body: some View {
-        VStack(spacing: 8) {
-            Text("Station \(TimetableDefaults.shared.STATION_ID)")
-            Text(apiKey.isEmpty ? "No API key" : "API key is set")
+        NavigationStack {
+            content
+                .navigationTitle("Departures")
+                .navigationBarTitleDisplayMode(.inline)
         }
-        .padding()
+        .task { await model.load() }
+    }
+
+    @ViewBuilder
+    private var content: some View {
+        switch model.state {
+        case .loading:
+            ProgressView()
+        case .loaded(let timetable):
+            List(timetable.departures, id: \.id) { departure in
+                DepartureRowView(departure: departure, zoneId: timetable.station.zone().id)
+            }
+            .listStyle(.plain)
+        case .failed:
+            Text("Something went wrong")
+        }
     }
 }
