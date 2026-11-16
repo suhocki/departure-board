@@ -20,4 +20,4 @@ dependencyResolutionManagement {
 }
 
 rootProject.name = "departure-board"
-include(":app")
+include(":app", ":shared")

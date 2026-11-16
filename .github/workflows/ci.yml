@@ -24,11 +24,12 @@ jobs:
           distribution: temurin
           java-version: 21
       - uses: gradle/actions/setup-gradle@v6
-      - run: ./gradlew ktlintCheck lintDebug verifyRoborazziDebug assembleRelease
+      - run: ./gradlew ktlintCheck lintDebug :shared:testAndroidHostTest verifyRoborazziDebug assembleRelease
       - uses: actions/upload-artifact@v7
         if: failure()
         with:
           name: reports
           path: |
             app/build/reports
+            shared/build/reports
             app/build/outputs/roborazzi

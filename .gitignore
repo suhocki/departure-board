@@ -6,5 +6,8 @@ local.properties
 .kotlin/
 .DS_Store
 *.apk
+xcuserdata/
+DerivedData/
+Local.xcconfig
 *.jks
 *.keystore
