@@ -33,3 +33,24 @@ jobs:
             app/build/reports
             shared/build/reports
             app/build/outputs/roborazzi
+
+  ios:
+    runs-on: macos-15
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-java@v6
+        with:
+          distribution: temurin
+          java-version: 21
+      - uses: gradle/actions/setup-gradle@v6
+      - run: ./gradlew :shared:iosSimulatorArm64Test
+      - name: Build the iOS app without signing
+        run: >
+          xcodebuild -project iosApp/iosApp.xcodeproj -scheme iosApp -sdk iphonesimulator
+          -destination 'generic/platform=iOS Simulator' CODE_SIGNING_ALLOWED=NO build
+      - uses: actions/upload-artifact@v7
+        if: failure()
+        with:
+          name: ios-reports
+          path: shared/build/reports
