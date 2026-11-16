@@ -5,6 +5,7 @@ import com.sukhotski.timetable.domain.LoadError
 import com.sukhotski.timetable.domain.LoadResult
 import com.sukhotski.timetable.domain.Station
 import com.sukhotski.timetable.domain.Timetable
+import com.sukhotski.timetable.domain.TimetableDefaults
 import com.sukhotski.timetable.testing.FakeTimetableRepository
 import com.sukhotski.timetable.testing.MainDispatcherRule
 import com.sukhotski.timetable.testing.MutableClock
@@ -90,7 +91,7 @@ class TimetableViewModelTest {
         assertEquals(
             listOf(
                 FakeTimetableRepository.Call(
-                    stationId = TimetableViewModel.STATION_ID,
+                    stationId = TimetableDefaults.STATION_ID,
                     from = Instant.parse("2026-11-13T16:05:00Z"),
                     to = Instant.parse("2026-11-13T18:05:00Z"),
                 ),
@@ -144,7 +145,7 @@ class TimetableViewModelTest {
         val later = start + 10.minutes
         assertEquals(
             FakeTimetableRepository.Call(
-                TimetableViewModel.STATION_ID,
+                TimetableDefaults.STATION_ID,
                 later,
                 later + 2.hours,
             ),
@@ -286,7 +287,7 @@ class TimetableViewModelTest {
     ) = TimetableUiState.Loaded(
         timetable,
         updatedAt,
-        TimetableViewModel.WINDOW,
+        TimetableDefaults.WINDOW,
         isRefreshing,
         refreshError,
     )

@@ -5,7 +5,6 @@ import java.util.Locale
 import kotlin.time.Instant
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.TimeZone
-import kotlinx.datetime.UtcOffset
 import kotlinx.datetime.offsetAt
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotEquals
@@ -76,13 +75,5 @@ class TimeFormatterTest {
         val german = TimeFormatter(is24Hour = true, Locale.GERMANY, datePattern = "EEEE, d. MMMM")
 
         assertEquals("Samstag, 14. November", german.date(LocalDate(2026, 11, 14)))
-    }
-
-    @Test
-    fun `formats utc offset`() {
-        assertEquals("UTC+1", formatUtcOffset(UtcOffset(hours = 1)))
-        assertEquals("UTC+5:30", formatUtcOffset(UtcOffset(5, 30)))
-        assertEquals("UTC-5", formatUtcOffset(UtcOffset(hours = -5)))
-        assertEquals("UTC", formatUtcOffset(UtcOffset.ZERO))
     }
 }

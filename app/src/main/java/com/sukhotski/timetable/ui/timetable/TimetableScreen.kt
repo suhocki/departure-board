@@ -36,6 +36,7 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.sukhotski.timetable.R
+import com.sukhotski.timetable.display.formatUtcOffset
 import com.sukhotski.timetable.domain.Station
 import com.sukhotski.timetable.ui.theme.TimetableTheme
 import java.util.Locale

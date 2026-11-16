@@ -19,6 +19,8 @@ import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.sukhotski.timetable.R
+import com.sukhotski.timetable.display.DelayLabel
+import com.sukhotski.timetable.display.delayLabel
 import com.sukhotski.timetable.domain.Departure
 import com.sukhotski.timetable.domain.DepartureStatus
 import com.sukhotski.timetable.domain.delayMinutes
@@ -27,7 +29,6 @@ import java.util.Locale
 import kotlinx.datetime.TimeZone
 
 /** Above this delay the row shows the expected clock time instead of minutes. */
-private const val EXPECTED_TIME_THRESHOLD_MINUTES = 30
 
 private val STATUS_MAX_WIDTH = 120.dp
 
@@ -83,11 +84,14 @@ private fun statusText(departure: Departure, zone: TimeZone, formatter: TimeForm
         DepartureStatus.Cancelled -> stringResource(R.string.departure_cancelled)
 
         is DepartureStatus.Delayed -> {
-            val minutes = delayMinutes(departure.scheduled, status.expected)
-            if (minutes > EXPECTED_TIME_THRESHOLD_MINUTES) {
-                stringResource(R.string.departure_expected, formatter.time(status.expected, zone))
-            } else {
-                stringResource(R.string.departure_delay, minutes)
+            when (val label = delayLabel(departure.scheduled, status.expected)) {
+                is DelayLabel.ExpectedAt ->
+                    stringResource(
+                        R.string.departure_expected,
+                        formatter.time(label.expected, zone),
+                    )
+
+                is DelayLabel.Minutes -> stringResource(R.string.departure_delay, label.minutes)
             }
         }
     }

@@ -3,12 +3,13 @@ package com.sukhotski.timetable.ui.timetable
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.sukhotski.timetable.domain.LoadResult
+import com.sukhotski.timetable.domain.TimetableDefaults.STATION_ID
+import com.sukhotski.timetable.domain.TimetableDefaults.WINDOW
 import com.sukhotski.timetable.domain.TimetableRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 import kotlin.time.Clock
 import kotlin.time.Duration
-import kotlin.time.Duration.Companion.hours
 import kotlin.time.Duration.Companion.minutes
 import kotlin.time.Instant
 import kotlinx.coroutines.Job
@@ -78,9 +79,6 @@ class TimetableViewModel @Inject constructor(
     }
 
     companion object {
-        /** Berlin central bus station. */
-        const val STATION_ID = "dcbaaee6-9603-11e6-9066-549f350fcb0c"
-        val WINDOW: Duration = 2.hours
         val STALE_AFTER: Duration = 1.minutes
     }
 }
