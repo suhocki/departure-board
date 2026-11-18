@@ -38,12 +38,9 @@ An Android app and a small iOS app on one shared Kotlin module. They show bus de
 - On return to the app: reloads when the data is older than one minute, retries after an error.
 
 The iOS app does the same, except date headers: it shows one flat list, so a window across midnight has no day header.
-It also has no Swift tests yet. The shared logic is tested on the iOS simulator.
 
 ## KMP notes
 
-- The Swift side has no tests. `TimetableModel` repeats a few ViewModel rules (skip while loading, keep the list on a failed refresh).
-  This is the price of native UI without SKIE. Moving the state into `shared` is the next step if more screens come.
 - A cancelled Swift task is ignored, not shown as an error. The Kotlin coroutine is not cancelled with it, the answer is dropped.
 - The API key sits in the app bundle (`Info.plist`) on iOS and in `BuildConfig` on Android. Both are readable from the app.
 - Shared code runs off the main thread (`Dispatchers.Default`). The model only touches results on `@MainActor`.
@@ -160,9 +157,6 @@ one constructor call on iOS) and the HTTP engine.
 `suspend` functions are called with `async/await`. The one entry point is `IosTimetableLoader`.
 
 **Honest limits**
-- The ViewModel is not shared. The iOS state logic is written a second time and is shorter: no reload on return to the app,
-  no date headers, no dark screenshots, no translations. Text on iOS is English only.
-- Cancelling a Swift task does not cancel the coroutine.
 - The iOS app has no tests of its own. The shared code is tested. The Darwin engine is checked only by running the app and by the CI build.
 - Sealed types are taken apart in Swift with `as?`. SKIE would make that nicer.
 
@@ -175,8 +169,6 @@ and the Swift code is not touched.
   and the reload on return to the app cover the common case.
 - Offline cache: an old timetable misleads. The HTTP cache does not help because `from` changes every time.
 - Station picker, arrivals, ride details: the screen asks for one list.
-- Shared ViewModel: the screen state is written twice, once per platform. A shared one is the next step.
-- iOS tests and translations.
 - Feature modules: one screen. A split would be `:core:domain`, `:data:timetable`, `:feature:timetable`.
 - Translations: all text is in `strings.xml`, minutes and hours use plurals.
 - compileSdk 37: it needs a newer AGP. OkHttp stays on 5.4 until then, 5.5 needs compileSdk 37.
